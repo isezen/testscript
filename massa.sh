@@ -402,10 +402,7 @@ download_binaries () {
     if test -n "$local"; then
         wget -qO $local "$remote"
     fi
-    tar -xzf $local
-    wget https://raw.githubusercontent.com/Errorist79/massa/main/config.toml -O $CONFIG_TOML
-    sed -i -e "s/^routable_ip *=.*/routable_ip = \"$(get_ip)\"/" $CONFIG_TOML
-    echo -e ''
+    tar -xzf $local -C $MASSA_PATH
     echo -e ${GRN}'\u2714 Binaries are downloaded'${NC}
 }
 
@@ -460,7 +457,7 @@ info () {
     echo -e "Available commands:"
     echo "$cmds"
     # echo -e "$(get_file_names)" | sed 's/^/ | /'
-    echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or log out & in to be able to run the commands."
+    echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
     line
     ROLLS="screen -r"
     echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
@@ -520,6 +517,7 @@ do
     save script
     keys
     services
+    create_config
     # rolls
     info
     source $HOME/.profile
