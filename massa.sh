@@ -130,18 +130,20 @@ save () {
     for v in $vars
     do
         content=$(eval echo \"\${$v}\")
-        path=$(echo "$content" | grep "$pat" | awk '{print $3}')
+        file_path=$(echo "$content" | grep "$pat" | awk '{print $3}')
+        dir_path="$(dirname "${file_path}")"
+        mkdir -p "$dir_path"
         content=$(echo "$content" | grep -v "$pat")
         sd=
-        if [[ $path != $HOME* ]]; then
+        if [[ $file_path != $HOME* ]]; then
             sd="sudo"
         fi
-        if test -n "$path"; then
-            eval 'echo "$content" | '$sd' tee $path > /dev/null'
+        if test -n "$file_path"; then
+            eval 'echo "$content" | '$sd' tee $file_path > /dev/null'
             if [[ "$content" == "#!"* ]]; then
-                eval $sd' chmod +x "$path"'
+                eval $sd' chmod +x "$file_path"'
             fi
-            echo -e ${YLW}' \u2714 '$path${NC}
+            echo -e ${YLW}' \u2714 '$file_path${NC}
         fi
     done
 }
