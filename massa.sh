@@ -116,6 +116,7 @@ EOF
 # -------------------------------------------------------------
 # FUNCTIONS:
 
+line () { echo -e ${PRP}"==============================================================="${NC}; }
 get_ubuntu_ver () { echo $(lsb_release -r | awk 'BEGIN{FS=":"} {print $2}' | 
     awk '{$1=$1};1'); }
 get_ip () { echo $(curl -s -4 ifconfig.co); }
@@ -163,8 +164,6 @@ create_config () {
     fi
     echo $yn
 }
-
-line () { echo -e ${PRP}"==============================================================="${NC}; }
 
 get_arch () {
     arc=$(arch)
