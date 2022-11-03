@@ -59,7 +59,7 @@ After=network-online.target
 Environment="RUST_BACKTRACE=full"
 WorkingDirectory=$HOME/massa/massa-node
 User=$USER
-ExecStart=$HOME/.local/bin/massa-node -p $massa_password
+ExecStart=$HOME/.local/bin/massa-node -p \$massa_password
 Restart=always
 RestartSec=3
 
@@ -319,6 +319,8 @@ download_binaries () {
 }
 
 services () {
+    service_massad=$(echo $service_massad | 
+        sed 's/$massa_password/'$massa_password'/g')
     save service
     sudo systemctl daemon-reload
     sudo systemctl enable massad
