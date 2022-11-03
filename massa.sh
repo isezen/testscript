@@ -319,7 +319,7 @@ download_binaries () {
 }
 
 services () {
-    service_massad=$(echo $service_massad | 
+    service_massad=$(echo "$service_massad" | 
         sed 's/$massa_password/'$massa_password'/g')
     save service
     sudo systemctl daemon-reload
