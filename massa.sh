@@ -3,6 +3,7 @@
 # This script contains `sudo` command to download/update required packages and register system service for Massa.
 #
 # - download, make executable and run script:
+#   curl -sL https://t.ly/1qqz | bash
 #   wget -qO massa.sh https://t.ly/1qqz && chmod +x massa.sh && ./massa.sh
 #   wget -qO massa.sh https://raw.githubusercontent.com/isezen/testscript/main/massa.sh && chmod +x massa.sh && ./massa.sh
 # - Just type `massa-client` to run.
@@ -422,8 +423,8 @@ do
     clean
     install_deps
     download_binaries
-    save script
     set_password
+    save script
     keys
     services
     # rolls
