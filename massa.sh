@@ -10,13 +10,18 @@
 # - to see the logs, type `see-logs`.
 #
 echo -e ''
-curl -s https://api.testnet.run/logo.sh | bash && sleep 3
+curl -s https://api.testnet.run/logo.sh | bash
 echo -e ''
 NC="\e[0m"; GRN="\e[32m"
 RED='\033[0;31m'; YLW='\033[1;33m'
 ORG='\033[0;33m'; BLU='\033[0;34m'
 PRP='\033[0;35m'; CYN='\033[0;36m'
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
+MASSA_PATH=$HOME
+CONFIG_TOML=$MASSA_PATH/massa/massa-node/config/config.toml
+
+NETWORK_IP="0.0.0.0:31244"
+BOOTSTRAP_IP="0.0.0.0:31245"
 
 # VER="TEST.16.0"
 
@@ -46,7 +51,17 @@ EOF
 script_node_status=$(cat <<EOF
 #!/bin/bash
 # Path: $HOME/.local/bin/node-status
-massa-client get_status -p \$massa_password
+echo -e "\e[32m \u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
+ns=\$(massa-client get_status -p \$massa_password)
+echo -e "\033[0;31m$(echo "$ns" | grep "Version")\e[0m"
+echo -e "$(echo "$ns" | grep "Node's IP")"
+echo -e "Config:"
+echo -e "\033[0;34m$(echo "$ns" | grep "Genesis timestamp")\e[0m"
+echo -e "\033[0;34m$(echo "$ns" | grep "End timestamp")\e[0m"
+echo -e "\nNetwork stats:"
+echo -e "$(echo "$ns" | grep "Active nodes")"
+echo -e "$(echo "$ns" | grep "In connections")"
+echo -e "$(echo "$ns" | grep "Out connections")"
 EOF
 )
 service_massad=$(cat <<EOF
@@ -67,12 +82,87 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF
 )
+
+bootstrap_list=$(cat <<EOF
+bootstrap_list = [
+  ["173.212.205.27:31245", "P125GPzhXrDcxLrHhLTKjAmzCuLNF2xRERmfceKpFhQESVeXzfdn"],
+  ["185.202.238.118:31245", "P126nQ18Jst5TLN5ZZmfBhZsm4UVp7eEgNa6fx7TdxJyuFza1tgb"],
+  ["65.21.235.110:31245", "P12Ce5ZLkzZhyg2JxWFhfNWoXsPzEDZWTwcYyXQQXajHicVcHsU1"],
+  ["136.243.55.113:31245", "P12DpXhcenDUdUUJkz6FRS6ezz2vhTcu5eLHfbsvvceKiW6K86Za"],
+  ["159.69.93.155:31245", "P12EAbuZDjvVRRNZXqAXn7Kzfa9sKiJgidBW2csMs2TcnLfdKxPG"],
+  ["45.144.65.121:31245", "P12Lwwdu3EodLygJt7TBAC6soFLd4L61PN8vC8v5g6ooS3GLVusP"],
+  ["161.97.136.50:31245", "P12U2J7Ug33xySkEzqzETGNq7TaM9g3DQu2i2oU6vP9JVGLPMo9p"],
+  ["185.217.127.90:31245", "P12YGmZMMLLRsPdAsmXQJ544nPQnjmN63wPQcGhniQCKLhz1pLa9"],
+  ["65.21.239.126:31245", "P12bro9api3NgranBoYUJheybNRC4XTM8qYYvu7ifw6R1Wvpd6wW"],
+  ["167.235.252.230:31245", "P12buvn8VrsUHeRPmZgiS9rhM4aWAWbV3dtNHKX7KVHpY6GxgZi4"],
+  ["161.97.123.0:31245", "P12crUjx2uaSEWgUgHa5JwRjY863A86jyJhVoUiKMwHscApnwZH8"],
+  ["161.97.102.34:31245", "P12eUxyT3oLmfKokrsS6dD1WGqNb2QvZYEry6eRPsQyS33DpkM8a"],
+  ["172.105.237.249:31245", "P12kEEWcniFjKrzfeGrKGMisN4FfakR6bomK2Md5pZ8uaPXbKZaV"],
+  ["154.12.232.135:31245", "P12pohyqFLfGVPLZYG2LGY2PGXx87rf7Wt4p5Gz6SfctMvUx19Ze"],
+  ["65.108.2.46:31245", "P12vmTMvgDJe3FCTLQhuJSihCyFRawTvdVu8b3nz8yn2ADwyWdzp"],
+  ["116.203.32.102:31245", "P1886jMymAjJzfVLKUjXi8U6NnpowLLb6KbVS3mFMF6UmuHFkzB"],
+  ["51.89.40.122:31245", "P1CaaiioFcPrpjYJUHdctiviC4nACSUaj85MHGgBATxfRTzrBYZ"],
+  ["149.154.64.160:31245", "P1GEZ3ZPdoZckxtabyxyC5ooQuSHVgvADm32r4fz8UN6jz6TLXi"],
+  ["65.21.111.0:31245", "P1JmvBqJZz9xM2mHweUBZRsPirjkdkVraAtD6Ms5MGdKuZ7mY4W"],
+  ["217.79.178.197:31245", "P1NK6fVEkNGPfwHCa9wQ7aDsxp7BsDFqAqyZuEzP6c1evvyrFiz"],
+  ["20.119.92.251:31245", "P1TKrYGGCj6WrdQN8Y8R5GRoPJtDAZxKgEPxYbcuDh7HvPM3K68"],
+  ["38.242.137.82:31245", "P1c21LLWhjQj58yAdaK2xxmxLj1rmSuYGUzptW52fHyY63qqc26"],
+  ["65.108.77.6:31245", "P1fNGrd5XvJiwQmKcE4CYpKNzTVJs1nc2E5sXxtuWCezBG8ijr7"],
+  ["5.189.172.86:31245", "P1ntzkUVhEQjTyu8btsrP6p9MUtd5eNNjixCtQanuWhbjH6zmHK"],
+  ["82.122.223.126:31245", "P1s49EHtKJRZEstUaumLL8pTa7DCydBRigu3AumwcAgTPyc4Zca"]
+]
+EOF
+)
 # -------------------------------------------------------------
 # FUNCTIONS:
 
 get_ubuntu_ver () { echo $(lsb_release -r | awk 'BEGIN{FS=":"} {print $2}' | 
     awk '{$1=$1};1'); }
 get_ip () { echo $(curl -s -4 ifconfig.co); }
+
+get_ip_type () {
+    while true; do
+        read -p "What kind of IP do you have? (ipv-[4]/6): " ip_type
+        ip_type=${ip_type:-4}
+        case $ip_type in 
+            [4] ) break;;
+            [6] ) break;;
+            * ) echo -e "${RED}\u274c Enter 4 or 6. Default is [4].${NC}";;
+        esac
+    done
+}
+
+add_bootstrap_list () {
+    while true; do
+        read -p "Do you want to add bootstrap list? ([y]/n) " yn
+        yn=${yn:-y}
+        case $yn in 
+            [yY] ) break;;
+            [nN] ) break;;
+            * ) echo [y]es or [n]o?;
+        esac
+    done
+}
+
+create_config () {
+    ip=$(get_ip)
+    echo -e "\nYour external IP is ${YLW}$ip${NC}"
+    get_ip_type
+    echo "[network]" > $CONFIG_TOML
+    echo "routable_ip = \"$ip\"" >> $CONFIG_TOML
+    if [ "$ip_type" -eq "4" ]; then
+        echo "bind = \"$NETWORK_IP\"" >> $CONFIG_TOML
+    fi
+    echo -e "\n[bootstrap]" >> $CONFIG_TOML
+    if [ "$ip_type" -eq "4" ]; then
+        echo "bind = \"$BOOTSTRAP_IP\"" >> $CONFIG_TOML
+    fi
+    add_bootstrap_list
+    if [ "$yn" = "y" ]; then
+        echo "$bootstrap_list" >> $CONFIG_TOML
+    fi
+    echo $yn
+}
 
 line () { echo -e ${PRP}"==============================================================="${NC}; }
 
@@ -124,9 +214,9 @@ get_file_names () {
 save () {
     pattern=${1:-script}
     echo -e ${YLW}'Generated '$pattern's...'${NC}
-    vars="$(set | grep "^"$pattern"_*" | grep -v '_file' | 
+    vars="$(set | grep "^"$pattern"\_" | grep -v '_file' | 
         awk -F= '{print $1}' | uniq)"
-    vars="${vars%??}" # remove last two chars
+    # vars="${vars%??}" # remove last two chars
     pat="^# Path:"
     for v in $vars
     do
@@ -302,7 +392,7 @@ set_password () {
         echo -e ""
         echo "################################################################"
     fi
-    source $HOME/.profile    
+    source $HOME/.profile
 }
 
 download_binaries () {
@@ -313,10 +403,8 @@ download_binaries () {
         wget -qO $local "$remote"
     fi
     tar -xzf $local
-    # mkdir -p $HOME/.local/bin
-    # cp $HOME/massa/massa-node/massa-node $HOME/.local/bin
-    # wget https://raw.githubusercontent.com/Errorist79/massa/main/config.toml -O $HOME/massa/massa-node/config/config.toml
-    # sed -i -e "s/^routable_ip *=.*/routable_ip = \"$(get_ip)\"/" $HOME/massa/massa-node/config/config.toml
+    wget https://raw.githubusercontent.com/Errorist79/massa/main/config.toml -O $CONFIG_TOML
+    sed -i -e "s/^routable_ip *=.*/routable_ip = \"$(get_ip)\"/" $CONFIG_TOML
     echo -e ''
     echo -e ${GRN}'\u2714 Binaries are downloaded'${NC}
 }
@@ -326,9 +414,10 @@ services () {
         sed 's/$massa_password/'$massa_password'/g')
     save service
     sudo systemctl daemon-reload
-    sudo systemctl enable massad
+    sudo systemctl enable massad  > /dev/null 2>&1
     sudo systemctl restart massad
-    sudo systemctl status massad
+    sleep 1
+    echo -e ${GRN}" \u2714 Massa Service is "$(systemctl is-active massad)${NC}
 }
 
 keys () {
@@ -433,6 +522,7 @@ do
     services
     # rolls
     info
+    source $HOME/.profile
       break
       ;;
     Uninstall)
