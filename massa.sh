@@ -498,7 +498,6 @@ install_pre_deps # install required packages for this script
 
 cd $HOME
 opts="Install"
-vc=
 vr=$(version remote)
 if [ -n "$(is_installed)" ]; then
     opts+=" Uninstall"
