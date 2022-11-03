@@ -126,6 +126,7 @@ save () {
     echo -e ${YLW}'Generated '$pattern's...'${NC}
     vars="$(set | grep "^"$pattern"_*" | grep -v '_file' | 
         awk -F= '{print $1}' | uniq)"
+    vars="${vars%??}" # remove last two chars
     pat="^# Path:"
     for v in $vars
     do
