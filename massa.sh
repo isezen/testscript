@@ -486,6 +486,10 @@ clean () {
     [ -n "$(grep "$pat" $HOME/.profile)" ] && 
     grep -v "$pat" .profile > .profile.tmp && 
     mv .profile.tmp .profile
+    pat="^export massa_version*"
+    [ -n "$(grep "$pat" $HOME/.profile)" ] && 
+    grep -v "$pat" .profile > .profile.tmp && 
+    mv .profile.tmp .profile
     rm -r massa 2> /dev/null
     rm $(get_file_paths script) 2> /dev/null
     sudo systemctl disable --now massad 2> /dev/null
@@ -508,7 +512,7 @@ if [ -n "$(is_installed)" ]; then
     echo ""
     echo -e "It seems like "${YLW}"Massa $vc"${NC}" is already installed on your system."
     wallet_str
-    echo -e ${RED}"! If you select [1], current Massa installation will be completely removed."${NC}
+    echo -e ${RED}"! If you select [1], current Massa installation will be completely removed.\n"${NC}
     if [ -n "$update" ]; then
         line
         echo -e ${RED}"** A new version ($vr) is available. **"${NC}
@@ -517,7 +521,7 @@ if [ -n "$(is_installed)" ]; then
 fi
 opts+=" Exit"
 
-PS3="What would you like to do?: "
+PS3="- What would you like to do?: "
 select opt in $opts;
 do
 
