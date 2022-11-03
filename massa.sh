@@ -394,6 +394,7 @@ install_deps () {
 }
 
 set_password () {
+    [ -n "$(grep "^export massa_password*" $HOME/.profile)" ] && massa_password=
     if [ ! "$massa_password" ]; then
         echo "################################################################"
         echo -e ""
@@ -482,7 +483,7 @@ info () {
 clean () {
     cd $HOME
     pat="^export massa_password*"
-    [ -n "$(grep "$pat" .profile)" ] && 
+    [ -n "$(grep "$pat" $HOME/.profile)" ] && 
     grep -v "$pat" .profile > .profile.tmp && 
     mv .profile.tmp .profile
     rm -r massa 2> /dev/null
