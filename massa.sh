@@ -53,15 +53,19 @@ script_node_status=$(cat <<EOF
 # Path: $HOME/.local/bin/node-status
 echo -e "\e[32m \u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
 ns=\$(massa-client get_status -p \$massa_password)
-echo -e "\033[0;31m$(echo "$ns" | grep "Version")\e[0m"
-echo -e "$(echo "$ns" | grep "Node's IP")"
-echo -e "Config:"
-echo -e "\033[0;34m$(echo "$ns" | grep "Genesis timestamp")\e[0m"
-echo -e "\033[0;34m$(echo "$ns" | grep "End timestamp")\e[0m"
-echo -e "\nNetwork stats:"
-echo -e "$(echo "$ns" | grep "Active nodes")"
-echo -e "$(echo "$ns" | grep "In connections")"
-echo -e "$(echo "$ns" | grep "Out connections")"
+echo -e "\033[0;31m$(echo "\$ns" | grep "Version")\e[0m"
+echo -e "\$(echo "\$ns" | grep "Node's IP")"
+
+echo "\nConfig:"
+echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
+echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m"
+echo -e "Episode ends in:"
+massa-client when_episode_ends -p Massa2022 | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{$1=$1};1' | sed 's/^/    /'
+
+echo "\nNetwork stats:"
+echo -e "\$(echo "\$ns" | grep "Active nodes")"
+echo -e "\033[0;31m\$(echo "\$ns" | grep "In connections")\e[0m"
+echo -e "\e[32m\$(echo "\$ns" | grep "Out connections")\e[0m"
 EOF
 )
 service_massad=$(cat <<EOF
