@@ -267,7 +267,8 @@ get_wallet () {
     if [[ -n "$massa_client" ]]; then
         for w in $what
         do
-            ret=$($massa_client wallet_info -p $massa_password | grep -i $w)
+            ret=$($massa_client wallet_info -p $massa_password  2> /dev/null
+                  | grep -i $w)
             col=$([[ $w == "address" ]] && echo '$2' || echo '$3')
             addr+=$(echo $ret | awk "{print $col}")"\n"
         done
