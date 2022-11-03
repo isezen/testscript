@@ -513,11 +513,11 @@ do
     clean
     install_deps
     download_binaries
+    create_config
     set_password
     save script
     keys
     services
-    create_config
     # rolls
     info
     source $HOME/.profile
