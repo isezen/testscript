@@ -3,62 +3,146 @@
 # This script contains `sudo` command to download/update required packages and register system service for Massa.
 #
 # - download, make executable and run script:
-#   wget -qO massa.sh https://gist.githubusercontent.com/isezen/3e4646cdacc4ea985c3f2bd6f42dbd39/raw/massa.sh && chmod +x massa.sh && ./massa.sh
+#   wget -qO massa.sh https://t.ly/1qqz && chmod +x massa.sh && ./massa.sh
+#   wget -qO massa.sh https://raw.githubusercontent.com/isezen/testscript/main/massa.sh && chmod +x massa.sh && ./massa.sh
 # - Just type `massa-client` to run.
 # - to see the logs, type `see-logs`.
 #
 echo -e ''
 curl -s https://api.testnet.run/logo.sh | bash && sleep 3
 echo -e ''
-GREEN="\e[32m"
-NC="\e[0m"
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-ORANGE='\033[0;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-VER="TEST.16.0"
-ARC="_"$(dpkg --print-architecture)
+NC="\e[0m"; GRN="\e[32m"
+RED='\033[0;31m'; YLW='\033[1;33m'
+ORG='\033[0;33m'; BLU='\033[0;34m'
+PRP='\033[0;35m'; CYN='\033[0;36m'
+REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 
-dependencies () {
-    pkgs="build-essential clang librocksdb-dev screen jq pkg-config curl 
-    git libssl-dev libclang-dev"
-    installed=false
-    to_install=
-    for p in $pkgs
-    do
-        if [ -z "$(dpkg -l | grep $p)" ]; then
-            to_install+=" $p"
-        fi
-    done
-    if test -n "$to_install"; then
-        echo -e ${YELLOW}'Installing dependencies\e[0m'${NC}
-        echo -e ''
-        sudo apt update
-        sudo apt install $to_install
-        installed=true
+# VER="TEST.16.0"
+
+# -------------------------------------------------------------
+# DEFINE SCRIPTS TO SAVE HERE
+
+script_massa_node=$(cat <<EOF
+#!/bin/bash
+# Path: $HOME/.local/bin/massa-node
+cd $HOME/massa/massa-node
+./massa-node \$@
+EOF
+)
+script_massa_client=$(cat <<EOF
+#!/bin/bash
+# Path: $HOME/.local/bin/massa-client
+cd $HOME/massa/massa-client
+./massa-client \$@
+EOF
+)
+script_see_logs=$(cat <<EOF
+#!/bin/bash
+# Path: $HOME/.local/bin/see-logs
+journalctl -u massad.service -fo cat
+EOF
+)
+script_node_status=$(cat <<EOF
+#!/bin/bash
+# Path: $HOME/.local/bin/node-status
+massa-client get_status -p \$massa_password
+EOF
+)
+service_massad=$(cat <<EOF
+# Path: /etc/systemd/system/massad.service
+[Unit]
+Description=Massa Daemon
+After=network-online.target
+
+[Service]
+Environment="RUST_BACKTRACE=full"
+WorkingDirectory=$HOME/massa/massa-node
+User=$USER
+ExecStart=$HOME/.local/bin/massa-node -p $massa_password
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+)
+# -------------------------------------------------------------
+# FUNCTIONS:
+
+get_ubuntu_ver () { echo $(lsb_release -r | awk 'BEGIN{FS=":"} {print $2}' | 
+    awk '{$1=$1};1'); }
+get_ip () { echo $(curl -s -4 ifconfig.co); }
+
+line () { echo -e ${PRP}"==============================================================="${NC}; }
+
+get_arch () {
+    arc=$(arch)
+    if [ "$arc" = "aarch64" ]; then
+        arc='arm64'
     fi
-    # if you are on Ubuntu Server 22.04, install libssl1.1
-    UBUNTU_VER=$(lsb_release -r | awk 'BEGIN{FS=":"} {print $2}' | awk '{$1=$1};1')
-    if [ $UBUNTU_VER = '22.04' ]; then
-        if [ -z "$(dpkg -l | grep libssl1.1)" ]; then
-            echo "Installing libssl1.1"
-            wget -qO libssl1.1.deb http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.0l-1~deb9u6$ARC.deb
-            sudo dpkg -i libssl1.1.deb
-            installed=true
-        fi
-    fi
-    if [ "$installed" = true ] ; then
-        echo -e ${YELLOW}'Dependencies installed\e[0m'${NC}
-    fi
+    echo $arc
 }
 
 file_exist () {
     loc=
     file="${1:-/etc/systemd/system/massad.service}"
-    if test -f "$file"; then loc=$FILE; fi
+    if test -f "$file"; then loc=$file; fi
     echo $loc
+}
+
+get_var_names () {
+    pattern=${1:-script}
+    vars="$(set | grep "^"$pattern"\_" | grep -v '_file' | 
+        awk -F= '{print $1}' | uniq)"
+    echo "$vars"
+}
+
+get_file_paths () {
+    pattern=${1:-script}
+    vars="$(get_var_names "$pattern")"
+    pat="^# Path:"
+    paths=
+    for v in $vars
+    do
+        content=$(eval echo \"\${$v}\")
+        paths+=$(echo "$content" | grep "$pat" | awk '{print $3}')" "
+    done
+    echo $paths
+}
+
+get_file_names () {
+    pattern=${1:-script}
+    fn=
+    for f in $(get_file_paths $pattern)
+    do
+        fn+=$(basename $f)" "
+    done
+    echo $fn | tr " " "\n"
+}
+
+save () {
+    pattern=${1:-script}
+    echo -e ${YLW}'Generated '$pattern's...'${NC}
+    vars="$(set | grep "^"$pattern"_*" | grep -v '_file' | 
+        awk -F= '{print $1}' | uniq)"
+    pat="^# Path:"
+    for v in $vars
+    do
+        content=$(eval echo \"\${$v}\")
+        path=$(echo "$content" | grep "$pat" | awk '{print $3}')
+        content=$(echo "$content" | grep -v "$pat")
+        sd=
+        if [[ $path != $HOME* ]]; then
+            sd="sudo"
+        fi
+        if test -n "$path"; then
+            eval 'echo "$content" | '$sd' tee $path > /dev/null'
+            if [[ "$content" == "#!"* ]]; then
+                eval $sd' chmod +x "$path"'
+            fi
+            echo -e ${YLW}' \u2714 '$path${NC}
+        fi
+    done
 }
 
 get_bin_loc () {
@@ -75,118 +159,196 @@ is_installed () {
     massa_client=$(get_bin_loc massa-client)
     massa_node=$(get_bin_loc massa-node)
     if [[ -n "$massa_client" && -n "$massa_node" ]]; then
-        echo 0
-    else
-        echo 1
+        echo "installed"
     fi
 }
 
 get_wallet () {
-    what=$(echo "${1:-address}" | awk '{print tolower($0)}')
+    what=$(echo "${1:-address secret public}" | awk '{print tolower($0)}')
     addr=
     massa_client=$(get_bin_loc massa-client)
     if [[ -n "$massa_client" ]]; then
-        addr=$($massa_client wallet_info -p $password | grep -i $what)
-        if [[ $what == "address" ]]; then
-            awk_str='$2'
-        else
-            awk_str='$3'
-        fi
-        addr=$(echo $addr | awk "{print $awk_str}")
+        for w in $what
+        do
+            ret=$($massa_client wallet_info -p $massa_password | grep -i $w)
+            col=$([[ $w == "address" ]] && echo '$2' || echo '$3')
+            addr+=$(echo $ret | awk "{print $col}")"\n"
+        done
+        addr="${addr%??}"
     fi
-    echo $addr
+    echo -e "$addr"
 }
 
-get_ver () {
+wallet_str () {
+    secret=$(get_wallet secret)
+    public=$(get_wallet public)
+    address=$(get_wallet address)
+    secret=$([ -z "$secret" ] && echo "NOT SET" || echo "$secret")
+    public=$([ -z "$public" ] && echo "NOT SET" || echo "$public")
+    address=$([ -z "$address" ] && echo "NOT SET" || echo "$address")
+    line
+    echo -e "Secret Key : ${RED}$secret${NC}"
+    echo -e "Public Key : ${GRN}$public${NC}"
+    echo -e "Address    : ${BLU}$address${NC}"
+    line
+}
+
+version () {
     ver=
-    massa_client=$(get_bin_loc massa-client)
-    if [[ -n "$massa_client" ]]; then
-        ns=$($massa_client get_status -p $password)
-        ver=$(echo "$ns" | grep 'Version' | awk '{print $2}')        
+    if [ -z "$1" ]; then
+        massa_client=$(get_bin_loc massa-client)
+        if [[ -n "$massa_client" ]]; then
+            ns=$($massa_client get_status -p $massa_password)
+            ver=$(echo "$ns" | grep 'Version' | awk '{print $2}')
+        fi
+    else
+        ver=$(curl -s $REMOTE | jq ".tag_name")
+        tmp="${ver%\"}"
+        ver="${tmp#\"}"
     fi
-    echo $ver
+    echo "$ver"
 }
 
-binaries () {
-    cd $HOME
-if [ ! "$password" ]; then
-    echo "################################################################"
-    echo -e ""
-    read -p ' Enter your node password!: ' password
-    echo 'export password='$password >> $HOME/.profile
-    echo -e ""
-    echo "################################################################"
-fi
-    EXTERNAL=$(curl -4 ifconfig.co)
-    source $HOME/.profile
-    echo -e ''
-    echo -e ${YELLOW}'Download Binaries'${NC} && sleep 1
-    echo -e ''
-    if [ $ARC = '_amd64' ]; then
-        ARC=""
+get_os_arch () {
+    os_arc=
+    un=$(uname | awk '{print tolower($0)}')
+    if [ "$un" = "darwin" ]; then
+        un='macos'
     fi
-    wget https://github.com/massalabs/massa/releases/download/"$VER"/massa_"$VER"_release_linux$ARC.tar.gz -O massa.tar.gz
-    tar -xvf massa.tar.gz
-    mkdir -p $HOME/.local/bin
-    cp $HOME/massa/massa-node/massa-node $HOME/.local/bin
-    wget https://raw.githubusercontent.com/Errorist79/massa/main/config.toml -O $HOME/massa/massa-node/config/config.toml
-    sed -i -e "s/^routable_ip *=.*/routable_ip = \"$EXTERNAL\"/" $HOME/massa/massa-node/config/config.toml
-#
-tee $HOME/.local/bin/massa-client > /dev/null <<EOF
-#!/bin/bash
-cd $HOME/massa/massa-client
-./massa-client $@
-EOF
-chmod +x $HOME/.local/bin/massa-client
-#
-tee $HOME/.local/bin/see-logs > /dev/null <<EOF
-#!/bin/bash
-journalctl -u massad.service -fo cat
-EOF
-chmod +x $HOME/.local/bin/see-logs
-#
-tee $HOME/.local/bin/node-status > /dev/null <<EOF
-#!/bin/bash
-massa-client get_status -p $password
-EOF
-chmod +x $HOME/.local/bin/node-status
+    arc=$(get_arch)
+    os_arc="$un"_"$arc"
+    if [[ $un == 'linux' && $arc == 'x86_64' ]]; then
+        os_arc=$un
+    fi
+    echo $os_arc
+}
+
+get_latest_release () {
+    os=$(get_os_arch)
+    ret=$(curl -s $REMOTE)
+    rel_ver=$(echo $ret | jq -r ".tag_name")
+    urls=$(echo $ret | jq -r ".assets[].browser_download_url")
+    echo "$urls" | grep $os"\."
+}
+
+to_install () {
+    pkgs=$1
+    to_install=
+    for p in $pkgs
+    do
+        if [ -z "$(dpkg -l | grep $p)" ]; then
+            to_install+=" $p"
+        fi
+    done
+    echo $to_install
+}
+
+install () {
+    installed=false
+    to_install=$(to_install "$1")
+    header="${2:-Installing dependencies}"
+    footer="${3:-Dependencies installed}"
+    if test -n "$to_install"; then
+        echo -e ${YLW}"$header\e[0m"${NC}
+        echo -e ''
+        sudo apt update
+        sudo apt install $to_install
+        installed=true
+    fi
+    if [ "$installed" = true ] ; then
+        echo -e ${YLW}"$footer\e[0m"${NC}
+    fi
+}
+
+install_pre_deps () {
+    pkgs="screen jq curl wget git"
+    header="Installing pre-dependencies to run the script"
+    footer="Pre-dependencies installed"
+    install "$pkgs" "$header" "$footer"
+}
+
+install_deb_libssl1 () {
+    arch="_"$(get_arch)
+    wget -qO libssl1.1.deb http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.0l-1~deb9u6$arch.deb
+    sudo dpkg -i libssl1.1.deb
+}
+
+install_deps () {
+    pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev libclang-dev"
+    header="Installing dependencies"
+    footer="Dependencies installed"
+    install "$pkgs" "$header" "$footer"
+    #
+    # if Ubuntu 22.04, install libssl1.1 from debian repo.
+    if [ $(get_ubuntu_ver) = '22.04' ]; then
+        if [ -z "$(dpkg -l | grep libssl1.1)" ]; then
+            echo -e ${YLW}'Installing libssl1.1\e[0m'${NC}
+            install_deb_libssl1
+            echo -e ${YLW}'libssl1.1 installed\e[0m'${NC}
+        fi
+    fi
+}
+
+set_password () {
+    if [ ! "$massa_password" ]; then
+        echo "################################################################"
+        echo -e ""
+        read -p ' Enter your Massa password: ' massa_password
+        echo 'export massa_password='$massa_password >> $HOME/.profile
+        echo -e ""
+        echo "################################################################"
+    fi
+    source $HOME/.profile    
+}
+
+download_binaries () {
+    remote=$(get_latest_release)
+    file="$(basename "${remote}")"
+    local=/tmp/$file
+    if test -n "$local"; then
+        wget -qO $local "$remote"
+    fi
+    tar -xzf $local
+    # mkdir -p $HOME/.local/bin
+    # cp $HOME/massa/massa-node/massa-node $HOME/.local/bin
+    # wget https://raw.githubusercontent.com/Errorist79/massa/main/config.toml -O $HOME/massa/massa-node/config/config.toml
+    # sed -i -e "s/^routable_ip *=.*/routable_ip = \"$(get_ip)\"/" $HOME/massa/massa-node/config/config.toml
+    echo -e ''
+    echo -e ${GRN}'\u2714 Binaries are downloaded'${NC}
 }
 
 services () {
-    echo -e ''
-    echo -e ${YELLOW}'Creating Daemon'${NC} && sleep 1
-    echo -e ''
-    sudo tee /etc/systemd/system/massad.service > /dev/null <<EOF
-[Unit]
-Description=Massa Daemon
-After=network-online.target
-
-[Service]
-Environment="RUST_BACKTRACE=full"
-WorkingDirectory=$HOME/massa/massa-node
-User=$USER
-ExecStart=$HOME/.local/bin/massa-node -p $password
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo systemctl daemon-reload
-sudo systemctl enable massad
-sudo systemctl restart massad
-sudo systemctl status massad
+    echo $massa_password
+    save service
+    sudo systemctl daemon-reload
+    sudo systemctl enable massad
+    sudo systemctl restart massad
+    sudo systemctl status massad
 }
 
 keys () {
     echo -e ''
-    echo -e "Generating keys..."
+    secret_key=
+    while true; do
+        read -p "Do you have a secret key? (y/n) " yn
+        case $yn in 
+            [yY] )
+                footer="Added"
+                cmd=wallet_add_secret_keys
+                read -p 'Enter Secret Key: ' secret_key
+                break;;
+            [nN] )
+                footer="Generated"
+                cmd=wallet_generate_secret_key
+                break;;
+            * ) echo [y]es or [n]o?;
+        esac
+    done
+    footer=${GRN}"\u2714 Key "$footer${NC}
+    echo -e "$footer"
     echo -e ''
-    sleep 3
-    cd $HOME/massa/massa-client
-    ./massa-client wallet_generate_secret_key  -p $password > /dev/null 2>&1
-    sleep 5
+    massa_client=$(get_bin_loc massa-client)
+    $massa_client $cmd "$secret_key" -p $massa_password > /dev/null 2>&1
 }
 
 rolls () {
@@ -195,35 +357,61 @@ rolls () {
     screen -dmS autorolls ./rolls.sh
 }
 
-done_process () {
-    LOG_SEE="see-logs"
-    NODE_STATUS="node-status"
-    ROLLS="screen -r"
-    echo -e ${GREEN}"======================================================"${NC}
-    ADDR=$(cd $HOME/massa/massa-client && ./massa-client wallet_info -p $password | grep Address)
-    echo -e "Here is your ${BLUE}$ADDR${NC}"
+info () {
+    echo -e ${GRN}"INFO:"${NC}
+    wallet_str
+    cmds="$(get_file_names | sed 's/^/'$(tput setaf 2)'/')"
+    cmds=$(echo "$cmds" | sed -e 's/$/'$(tput sgr0)'/')
+    cmds=$(echo "$cmds" | sed 's/^/ | /')
     echo -e "Available commands:"
-    echo -e " | massa-client"
-    echo -e " | ${BLUE}$LOG_SEE${NC} "
-    echo -e " | node-status"
-    echo -e "The buy_rolls process happens automatically, to check status: ${BLUE}$ROLLS${NC}"
-    echo -e ${RED}"please don't close the screen! Just use the CTRL+A+D key combination to leave the screen! "${NC}
-    echo -e ${GREEN}"======================================================"${NC}
+    echo "$cmds"
+    # echo -e "$(get_file_names)" | sed 's/^/ | /'
+    echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or log out & in to be able to run the commands."
+    line
+    ROLLS="screen -r"
+    echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
+    echo -e ${RED}"! Please don't close the screen."${NC}
+    echo -e ${RED}"! Just use the CTRL+A+D key combination to leave the screen."${NC}
+    line
 }
 
+clean () {
+    cd $HOME
+    pat="^export massa_password*"
+    [ -n "$(grep "$pat" .profile)" ] && 
+    grep -v "$pat" .profile > .profile.tmp && 
+    mv .profile.tmp .profile
+    rm -r massa 2> /dev/null
+    rm $(get_file_paths script) 2> /dev/null
+    sudo systemctl disable --now massad 2> /dev/null
+    sudo rm $(get_file_paths service) 2> /dev/null
+    sudo systemctl daemon-reload 2> /dev/null
+}
+# -------------------------------------------------------------
+# MAIN
 
-opts="Install quit"
+install_pre_deps # install required packages for this script
+
+cd $HOME
+opts="Install"
+vc=
+vr=$(version remote)
 if [ -n "$(is_installed)" ]; then
-    ver=$(get_ver)
+    opts+=" Uninstall"
+    vc=$(version)
+    update=$([ $vc != $vr ] && echo "Update" || echo "")
+    opts+=" "$update
     echo ""
-    echo -e "It seems like "${RED}"Massa $ver"${NC}" is already installed on your system."
-    echo -e ${PURPLE}"==============================================================="${NC}
-    echo -e "Secret Key: ${RED}$(get_wallet secret)${NC}"
-    echo -e "Public Key: ${GREEN}$(get_wallet public)${NC}"
-    echo -e "Address   : ${BLUE}$(get_wallet)${NC}"
-    echo -e ${PURPLE}"==============================================================="${NC}
-    opts="Install Update Additional quit"
+    echo -e "It seems like "${YLW}"Massa $vc"${NC}" is already installed on your system."
+    wallet_str
+    echo -e ${RED}"! If you select [1], current Massa installation will be completely removed."${NC}
+    if [ -n "$update" ]; then
+        line
+        echo -e ${RED}"** A new version ($vr) is available. **"${NC}
+        line
+    fi
 fi
+opts+=" Exit"
 
 PS3="What would you like to do?: "
 select opt in $opts;
@@ -231,14 +419,19 @@ do
 
   case $opt in
     Install)
-    echo -e '\e[1;32mThe installation process begins...\e[0m'
-    sleep 1
-    dependences
-    binaries
-    services
+    clean
+    install_deps
+    download_binaries
+    save script
+    set_password
     keys
-    rolls
-    done_process
+    services
+    # rolls
+    info
+      break
+      ;;
+    Uninstall)
+    clean
       break
       ;;
     Update)
@@ -248,14 +441,8 @@ do
     done_process
       break
       ;;
-    Additional)
-    echo -e '\e[1;32mAdditional commands...\e[0m'
-    echo -e ''
-    echo -e '\e[1;32mSoon...'
-    done_process
-      ;;
-    quit)
-    echo -e '\e[1;32mexit...\e[0m'
+    Exit)
+        echo -e '\e[1;32mByE!\e[0m'
       break
       ;;
     *)
