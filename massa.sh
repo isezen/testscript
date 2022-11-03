@@ -60,7 +60,7 @@ echo "\nConfig:"
 echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
 echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m"
 echo -e "Episode ends in:"
-massa-client when_episode_ends -p Massa2022 | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{$1=$1};1' | sed 's/^/    /'
+massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{$1=$1};1' | sed 's/^/    /'
 
 echo "\nNetwork stats:"
 echo -e "\$(echo "\$ns" | grep "Active nodes")"
