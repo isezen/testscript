@@ -267,7 +267,7 @@ get_wallet () {
     if [[ -n "$massa_client" ]]; then
         for w in $what
         do
-            ret=$($massa_client wallet_info -p $massa_password  2> /dev/null
+            ret=$($massa_client wallet_info -p $massa_password  2> /dev/null \
                   | grep -i $w)
             col=$([[ $w == "address" ]] && echo '$2' || echo '$3')
             addr+=$(echo $ret | awk "{print $col}")"\n"
@@ -425,7 +425,8 @@ keys () {
     echo -e ''
     secret_key=
     while true; do
-        read -p "Do you have a secret key? (y/n) " yn
+        read -p "Do you have a secret key? (y/[n]) " yn
+        yn=${yn:-n}
         case $yn in 
             [yY] )
                 footer="Added"
