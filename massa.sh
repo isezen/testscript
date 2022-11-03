@@ -292,13 +292,19 @@ wallet_str () {
 }
 
 version () {
-    ver=
+    ver=$massa_version
     if [ -z "$1" ]; then
-        massa_client=$(get_bin_loc massa-client)
-        if [[ -n "$massa_client" ]]; then
-            ns=$($massa_client get_status -p $massa_password)
-            ver=$(echo "$ns" | grep 'Version' | awk '{print $2}')
+        if [ -z $ver ]; then
+            ver="NOT SET"
         fi
+        # massa_client=$(get_bin_loc massa-client)
+        # if [[ -n "$massa_client" ]]; then
+        #     echo $massa_client
+        #     ns=$($massa_client get_status -p $massa_password)
+        #     if [ -z $(echo "$ns" | grep 'os error 111') ]; then
+        #         ver=$(echo "$ns" | grep 'Version' | awk '{print $2}')
+        #     fi
+        # fi
     else
         ver=$(curl -s $REMOTE | jq ".tag_name")
         tmp="${ver%\"}"
@@ -399,7 +405,8 @@ set_password () {
     source $HOME/.profile
 }
 
-download_binaries () {
+download_bins () {
+    vr=$(version remote)
     remote=$(get_latest_release)
     file="$(basename "${remote}")"
     local=/tmp/$file
@@ -407,6 +414,7 @@ download_binaries () {
         wget -qO $local "$remote"
     fi
     tar -xzf $local -C $MASSA_PATH
+    echo 'export massa_version='$vr >> $HOME/.profile
     echo -e ${GRN}'\u2714 Binaries are downloaded'${NC}
 }
 
@@ -517,7 +525,7 @@ do
     Install)
     clean
     install_deps
-    download_binaries
+    download_bins
     create_config
     set_password
     save script
