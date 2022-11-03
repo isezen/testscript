@@ -56,13 +56,13 @@ ns=\$(massa-client get_status -p \$massa_password)
 echo -e "\033[0;31m$(echo "\$ns" | grep "Version")\e[0m"
 echo -e "\$(echo "\$ns" | grep "Node's IP")"
 
-echo "\nConfig:"
+echo -e "\nConfig:"
 echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
 echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m"
 echo -e "Episode ends in:"
 massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{$1=$1};1' | sed 's/^/    /'
 
-echo "\nNetwork stats:"
+echo -e "\nNetwork stats:"
 echo -e "\$(echo "\$ns" | grep "Active nodes")"
 echo -e "\033[0;31m\$(echo "\$ns" | grep "In connections")\e[0m"
 echo -e "\e[32m\$(echo "\$ns" | grep "Out connections")\e[0m"
@@ -139,8 +139,8 @@ get_ip_type () {
 
 add_bootstrap_list () {
     while true; do
-        read -p "Do you want to add bootstrap list? ([y]/n) " yn
-        yn=${yn:-y}
+        read -p "Do you want to add bootstrap list? (y/[n]) " yn
+        yn=${yn:-n}
         case $yn in 
             [yY] ) break;;
             [nN] ) break;;
