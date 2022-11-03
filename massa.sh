@@ -294,7 +294,7 @@ set_password () {
     if [ ! "$massa_password" ]; then
         echo "################################################################"
         echo -e ""
-        read -p ' Enter your Massa password: ' massa_password
+        read -p 'Enter a password for Massa: ' massa_password
         echo 'export massa_password='$massa_password >> $HOME/.profile
         echo -e ""
         echo "################################################################"
@@ -319,7 +319,6 @@ download_binaries () {
 }
 
 services () {
-    echo $massa_password
     save service
     sudo systemctl daemon-reload
     sudo systemctl enable massad
