@@ -542,7 +542,7 @@ if [ -n "$installed" ]; then
         txt+='\n'$(line)
     fi
 fi
-echo -e "$txt"
+echo -e "$txt"'\n'
 
 
 opts+=" Exit"
