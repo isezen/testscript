@@ -545,8 +545,8 @@ clean () {
 txt=$(echo -e "$header" | sed 's/^/                                /')
 txt=$(echo -e "${RED}$txt${NC}")"\n"
 txt+='\n'$(line)
-txt+="${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
-txt+="${BLU}     \xF0\x9F\x94\x97 https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
+txt+='\n'"${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
+txt+='\n'"${BLU}     \xF0\x9F\x94\x97 https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
 txt+='\n'$(line)
 
 
