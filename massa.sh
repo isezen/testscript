@@ -56,7 +56,7 @@ script_node_status=$(cat <<EOF
 # Path: $HOME/.local/bin/node-status
 echo -e "\e[32m \u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
 ns=\$(massa-client get_status -p \$massa_password)
-if [ -z \$(echo "\$ns" | grep 'os error 111') ]; then
+if  [ -z "$(echo "$ns" | grep "os error 111")" ]; then
     echo -e "\033[0;31m$(echo "\$ns" | grep "Version")\e[0m"
     echo -e "\$(echo "\$ns" | grep "Node's IP")"
 
@@ -71,7 +71,7 @@ if [ -z \$(echo "\$ns" | grep 'os error 111') ]; then
     echo -e "\033[0;31m\$(echo "\$ns" | grep "In connections")\e[0m"
     echo -e "\e[32m\$(echo "\$ns" | grep "Out connections")\e[0m"
 else
-    echo "\033[0;31m Massa is currently bootstrapping ...\e[0m"
+    echo -e "\033[0;31m\xE2\x8C\x9A Massa is currently bootstrapping\xE2\x80\xA6 \xE2\x98\x95\e[0m"
 fi
 EOF
 )
@@ -214,7 +214,7 @@ get_file_names () {
 
 save () {
     pattern=${1:-script}
-    echo -e ${YLW}'Generated '$pattern's...'${NC}
+    echo -e ${YLW}'Generating '$pattern's...'${NC}
     vars="$(set | grep "^"$pattern"\_" | grep -v '_file' | 
         awk -F= '{print $1}' | uniq)"
     # vars="${vars%??}" # remove last two chars
@@ -481,11 +481,11 @@ info () {
     echo "$cmds"
     echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
     line
-    ROLLS="screen -r"
-    echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
-    echo -e ${RED}"! Please don't close the screen."${NC}
-    echo -e ${RED}"! Just use the CTRL+A+D key combination to leave the screen."${NC}
-    line
+    # ROLLS="screen -r"
+    # echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
+    # echo -e ${RED}"! Please don't close the screen."${NC}
+    # echo -e ${RED}"! Just use the CTRL+A+D key combination to leave the screen."${NC}
+    # line
 }
 
 clean () {
