@@ -586,7 +586,7 @@ do
     save script
     keys
     services
-    # rolls
+    add_profile_local_bin
     info
       break
       ;;
