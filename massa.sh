@@ -370,9 +370,9 @@ install () {
 }
 
 install_pre_deps () {
-    pkgs="screen jq curl wget git"
-    header="Installing pre-dependencies to run the script"
-    footer="Pre-dependencies installed"
+    local pkgs="screen jq curl wget git"
+    local header="Installing pre-dependencies to run the script"
+    local footer="Pre-dependencies installed"
     install "$pkgs" "$header" "$footer"
 }
 
@@ -413,7 +413,6 @@ set_password () {
         stty echo
         echo 'export massa_password='$massa_password >> $HOME/.profile
         echo -e ""
-        echo "################################################################"
     fi
     source $HOME/.profile
 }
