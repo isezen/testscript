@@ -488,22 +488,24 @@ info () {
 }
 
 clean () {
-    cd $HOME
-    vc=$(version)
-    pat="^export massa_password*"
-    [ -n "$(grep "$pat" $HOME/.profile)" ] && 
-    grep -v "$pat" .profile > .profile.tmp && 
-    mv .profile.tmp .profile
-    pat="^export massa_version*"
-    [ -n "$(grep "$pat" $HOME/.profile)" ] && 
-    grep -v "$pat" .profile > .profile.tmp && 
-    mv .profile.tmp .profile
-    rm -r massa 2> /dev/null
-    rm $(get_file_paths script) 2> /dev/null
-    sudo systemctl disable --now massad 2> /dev/null
-    sudo rm $(get_file_paths service) 2> /dev/null
-    sudo systemctl daemon-reload 2> /dev/null
-    echo -e ""${YLW}"Massa $vc"${NC}" removed from the system."
+    if [ -n "$(is_installed)" ]; then
+        cd $HOME
+        vc=$(version)
+        pat="^export massa_password*"
+        [ -n "$(grep "$pat" $HOME/.profile)" ] && 
+        grep -v "$pat" .profile > .profile.tmp && 
+        mv .profile.tmp .profile
+        pat="^export massa_version*"
+        [ -n "$(grep "$pat" $HOME/.profile)" ] && 
+        grep -v "$pat" .profile > .profile.tmp && 
+        mv .profile.tmp .profile
+        rm -r massa 2> /dev/null
+        rm $(get_file_paths script) 2> /dev/null
+        sudo systemctl disable --now massad 2> /dev/null
+        sudo rm $(get_file_paths service) 2> /dev/null
+        sudo systemctl daemon-reload 2> /dev/null
+        echo -e ""${YLW}"Massa $vc"${NC}" removed from the system."
+    fi
 }
 # -------------------------------------------------------------
 # MAIN
