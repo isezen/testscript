@@ -426,11 +426,11 @@ install_deb_libssl1 () {
 }
 
 install_deps () {
-    local pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev \
-                libclang-dev"
-    local header="Installing dependencies"
-    local footer="Dependencies installed"
-    install "$pkgs" "$header" "$footer"
+    # local pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev \
+    #             libclang-dev"
+    # local header="Installing dependencies"
+    # local footer="Dependencies installed"
+    # install "$pkgs" "$header" "$footer"
     #
     # if Ubuntu 22.04, install libssl1.1 from debian repo.
     if [ $(get_ubuntu_ver) = '22.04' ]; then
@@ -585,7 +585,7 @@ do
   case $opt in
     Install)
     clean
-    # install_deps
+    install_deps
     download_bins
     create_config
     set_password
