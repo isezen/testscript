@@ -175,14 +175,6 @@ create_config () {
     fi
 }
 
-get_arch () {
-    arc=$(arch)
-    if [ "$arc" = "aarch64" ]; then
-        arc='arm64'
-    fi
-    echo $arc
-}
-
 file_exist () {
     loc=
     file="${1:-/etc/systemd/system/massad.service}"
@@ -297,26 +289,12 @@ wallet_str () {
     line
 }
 
-version () {
-    ver=$massa_version
-    if [ -z "$1" ]; then
-        if [ -z $ver ]; then
-            ver="NOT SET"
-        fi
-        # massa_client=$(get_bin_loc massa-client)
-        # if [[ -n "$massa_client" ]]; then
-        #     echo $massa_client
-        #     ns=$($massa_client get_status -p $massa_password)
-        #     if [ -z $(echo "$ns" | grep 'os error 111') ]; then
-        #         ver=$(echo "$ns" | grep 'Version' | awk '{print $2}')
-        #     fi
-        # fi
-    else
-        ver=$(curl -s $REMOTE | jq ".tag_name")
-        tmp="${ver%\"}"
-        ver="${tmp#\"}"
+get_arch () {
+    arc=$(arch)
+    if [ "$arc" = "aarch64" ]; then
+        arc='arm64'
     fi
-    echo "$ver"
+    echo $arc
 }
 
 get_os_arch () {
@@ -333,18 +311,34 @@ get_os_arch () {
     echo $os_arc
 }
 
-get_latest_release () {
-    os=$(get_os_arch)
+remote () {
     ret=$(curl -s $REMOTE)
-    rel_ver=$(echo $ret | jq -r ".tag_name")
-    urls=$(echo $ret | jq -r ".assets[].browser_download_url")
-    echo "$urls" | grep $os"\."
+    if [ -n "$(echo $ret | grep 'API rate limit exceeded')" ]; then
+        echo -e "${RED}\u274c API rate limit exceeded.${NC}"
+        echo -e "${RED}   Try again after a while ...${NC}"
+        exit 1
+    fi
+    echo $ret
+}
+
+version () {
+    v=$massa_version
+    if [ -z "$1" ] && [ -n "$v" ]; then
+        v="NOT SET"
+    else
+        v=$(remote | jq -r ".tag_name")
+    fi
+    echo "$v"
+}
+
+get_latest_release () {
+    echo $(remote | jq -r ".assets[].browser_download_url" | 
+        grep $(get_os_arch)"\.")
 }
 
 to_install () {
-    pkgs=$1
     to_install=
-    for p in $pkgs
+    for p in $1
     do
         if [ -z "$(dpkg -l | grep $p)" ]; then
             to_install+=" $p"
