@@ -353,7 +353,7 @@ to_install () {
 }
 
 install () {
-    locall installed=false
+    local installed=false
     local to_install=$(to_install "$1")
     local header="${2:-Installing dependencies}"
     local footer="${3:-Dependencies installed}"
