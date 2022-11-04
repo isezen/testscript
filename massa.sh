@@ -299,6 +299,8 @@ get_arch () {
     arc=$(arch)
     if [ "$arc" = "aarch64" ]; then
         arc='arm64'
+    elif [ "$arc" = "x86_64" ]; then
+        arc='amd64'
     fi
     echo $arc
 }
@@ -311,7 +313,7 @@ get_os_arch () {
     fi
     arc=$(get_arch)
     os_arc="$un"_"$arc"
-    if [[ $un == 'linux' && $arc == 'x86_64' ]]; then
+    if [[ $un == 'linux' && $arc == 'amd64' ]]; then
         os_arc=$un
     fi
     echo $os_arc
