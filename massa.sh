@@ -503,6 +503,7 @@ rolls () {
 }
 
 info () {
+    source $PROFILE
     echo -e ${GRN}"INFO:"${NC}
     wallet_str
     cmds="$(get_file_names | sed 's/^/'$(tput setaf 2)'/')"
@@ -512,7 +513,7 @@ info () {
     echo "$cmds"
     echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
     echo -e "${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
-    echo -e "${BLU} - https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
+    echo -e "${BLU}     - https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
     line
     # ROLLS="screen -r"
     # echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
