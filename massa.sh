@@ -16,6 +16,7 @@
 MASSA_PATH=$HOME
 PROFILE=$HOME/.profile
 CONFIG_TOML=$MASSA_PATH/massa/massa-node/config/config.toml
+ADD_BOOTSTRAP_LIST=false
 NETWORK_IP="0.0.0.0:31244"
 BOOTSTRAP_IP="0.0.0.0:31245"
 # -------------------------------------------------------------
@@ -140,7 +141,8 @@ line () { echo -e ${PRP}"=======================================================
 get_ubuntu_ver () { echo $(lsb_release -r | awk 'BEGIN{FS=":"} {print $2}' | 
     awk '{$1=$1};1'); }
 get_ip () { echo $(curl -s -4 ifconfig.co); }
-
+get_ip6 () { ip addr | grep inet6 | grep "scope global" | awk '{$1=$1};1' | \
+             awk '{print $2}' | awk -F'/' '{print $1}'; }
 get_ip_type () {
     while true; do
         read -p "What kind of IP do you have? (ipv-[4]/6): " ip_type
@@ -171,23 +173,27 @@ add_profile_pass () {
     add2profile 'export massa_password='$1
 }
 
-
-
 add_bootstrap_list () {
-    while true; do
-        read -p "Do you want to add bootstrap list? (y/[n]) " yn
-        yn=${yn:-n}
-        case $yn in 
-            [yY] ) break;;
-            [nN] ) break;;
-            * ) echo [y]es or [n]o?;
-        esac
-    done
+    if [ "$ADD_BOOTSTRAP_LIST" = true ] ; then
+        while true; do
+            read -p "Do you want to add bootstrap list? (y/[n]) " yn
+            yn=${yn:-n}
+            case $yn in 
+                [yY] ) break;;
+                [nN] ) break;;
+                * ) echo [y]es or [n]o?;
+            esac
+        done
+    fi
 }
 
 create_config () {
     ip=$(get_ip)
-    echo -e "\nYour external IP is ${YLW}$ip${NC}"
+    echo -e "\nYour external IPv4 address is ${YLW}$ip${NC}"
+    ip6=$(get_ip6)
+    if [ -n "$ip6" ]; then
+        echo -e "\nYour external IPv6 address is ${YLW}$ip6${NC}"
+    fi
     get_ip_type
     echo "[network]" > $CONFIG_TOML
     echo "routable_ip = \"$ip\"" >> $CONFIG_TOML
@@ -579,7 +585,7 @@ do
   case $opt in
     Install)
     clean
-    install_deps
+    # install_deps
     download_bins
     create_config
     set_password
