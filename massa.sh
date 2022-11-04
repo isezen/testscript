@@ -11,23 +11,32 @@
 # - Just type `massa-client` to run.
 # - to see the logs, type `see-logs`.
 #
-echo -e ''
-curl -s https://api.testnet.run/logo.sh | bash
-echo -e ''
+# curl -s https://api.testnet.run/logo.sh | bash
+
+MASSA_PATH=$HOME
+CONFIG_TOML=$MASSA_PATH/massa/massa-node/config/config.toml
+NETWORK_IP="0.0.0.0:31244"
+BOOTSTRAP_IP="0.0.0.0:31245"
+# -------------------------------------------------------------
 NC="\e[0m"; GRN="\e[32m"
 RED='\033[0;31m'; YLW='\033[1;33m'
 ORG='\033[0;33m'; BLU='\033[0;34m'
 PRP='\033[0;35m'; CYN='\033[0;36m'
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 
-MASSA_PATH=$HOME
-CONFIG_TOML=$MASSA_PATH/massa/massa-node/config/config.toml
-
-NETWORK_IP="0.0.0.0:31244"
-BOOTSTRAP_IP="0.0.0.0:31245"
-
-# VER="TEST.16.0"
-
+header=$(cat <<EOF
+                             
+                             
+    )       )             )  
+   (     ( /(  (   (   ( /(  
+   )\  ' )(_)) )\  )\  )(_)) 
+ _((_)) ((_)_ ((_)((_)((_)_  
+| '  \()/ _\` |(_-<(_-</ _\` | 
+|_|_|_| \__,_|/__//__/\__,_| 
+                             
+EOF
+)
+echo -e "${RED}$header${NC}"
 # -------------------------------------------------------------
 # DEFINE SCRIPTS TO SAVE HERE
 
@@ -323,15 +332,11 @@ remote () {
 
 version () {
     v=$massa_version
-    if [ -z "$1" ] && [ -z "$v" ]; then
-        v="NOT SET"
-    else
-        v=$(remote | jq -r ".tag_name")
-    fi
-    echo "$v"
+    echo $([ -z "$1" ] && [ -z "$v" ] && echo "NOT SET" || 
+           remote | jq -r ".tag_name")
 }
 
-get_latest_release () {
+get_latest_release_url () {
     echo $(remote | jq -r ".assets[].browser_download_url" | 
         grep $(get_os_arch)"\.")
 }
@@ -417,7 +422,7 @@ set_password () {
 
 download_bins () {
     vr=$(version remote)
-    remote=$(get_latest_release)
+    remote=$(get_latest_release_url)
     file="$(basename "${remote}")"
     local=/tmp/$file
     if test -n "$local"; then
