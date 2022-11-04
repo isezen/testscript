@@ -404,7 +404,9 @@ set_password () {
     if [ ! "$massa_password" ]; then
         echo "################################################################"
         echo -e ""
+        stty -echo
         read -p 'Enter a password for Massa: ' massa_password
+        stty echo
         echo 'export massa_password='$massa_password >> $HOME/.profile
         echo -e ""
         echo "################################################################"
