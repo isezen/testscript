@@ -35,7 +35,6 @@ header=$(cat <<EOF
                    \xF0\x9F\x94\xA5 Fire-\xF0\x9D\x9B\xBC
 EOF
 )
-echo -e "${RED}$header${NC}"
 # -------------------------------------------------------------
 # DEFINE SCRIPTS TO SAVE HERE
 
@@ -405,7 +404,6 @@ set_password () {
         unset massa_password
     fi
     if [ ! "$massa_password" ]; then
-        echo "################################################################"
         stty -echo
         while [ -z "${massa_password}" ]; do
             echo -e ""
@@ -413,7 +411,6 @@ set_password () {
         done
         # read -p 'Enter a password for Massa: ' massa_password
         stty echo
-        echo $massa_password
         echo 'export massa_password='$massa_password >> $HOME/.profile
         echo -e ""
         echo "################################################################"
@@ -522,21 +519,26 @@ install_pre_deps # install required packages for the script
 cd $HOME
 opts="Install"
 vr=$(version remote)
-if [ -n "$(is_installed)" ]; then
+installed=$(is_installed)
+txt=$(echo -e "${RED}$header${NC}")"\n"
+if [ -n "$installed" ]; then
     opts+=" Uninstall"
+    txt+='\n'"$(echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system.")"
+    txt+='\n'"$(wallet_str)"
+    txt+='\n'"$(echo -e ${CYN}"\xE2\x9A\xA0 If you select [1], current Massa installation will be completely removed."${NC})"
+    #
     vc=$(version)
     update=$([ "$vc" != "$vr" ] && echo "Update" || echo "")
     opts+=" "$update
-    echo ""
-    echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system."
-    wallet_str
-    echo -e ${RED}"\xE2\x9A\xA0 If you select [1], current Massa installation will be completely removed.\n"${NC}
     if [ -n "$update" ]; then
-        line
-        echo -e ${RED}"** A new version ($vr) is available. **"${NC}
-        line
+        txt+='\n'$(line)
+        txt+='\n'$(echo -e ${RED}"\xF0\x9F\x93\xA6 A new version ($vr) is available."${NC})
+        txt+='\n'$(line)
     fi
 fi
+echo -e "$txt"
+
+
 opts+=" Exit"
 
 PS3=$'\n'$'\033[0;33m'"⬣ What would you like to do?: "
