@@ -22,6 +22,7 @@ NC="\e[0m"; GRN="\e[32m"
 RED='\033[1;31m'; YLW='\033[1;33m'
 ORG='\033[0;33m'; BLU='\033[0;34m'
 PRP='\033[0;35m'; CYN='\033[0;36m'
+CHK=''\xE2\x9C\x94''
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 
 header=$(cat <<EOF
@@ -70,11 +71,11 @@ if  [ -z "$(echo "$ns" | grep "os error 111")" ]; then
     echo -e "\nConfig:"
     echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
     echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m"
-    echo -e "Episode ends in:"
-    massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{$1=$1};1' | sed 's/^/    /'
+    echo -e "Episode ends in:\033[0;35m"
+    massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
 
-    echo -e "\nNetwork stats:"
-    echo -e "\$(echo "\$ns" | grep "Active nodes")"
+    echo -e "\n\e[0mNetwork stats:"
+    echo -e "\033[0;33m\$(echo "\$ns" | grep "Active nodes")\e[0m"
     echo -e "\033[0;31m\$(echo "\$ns" | grep "In connections")\e[0m"
     echo -e "\e[32m\$(echo "\$ns" | grep "Out connections")\e[0m"
 else
@@ -242,7 +243,7 @@ save () {
             if [[ "$content" == "#!"* ]]; then
                 eval $sd' chmod +x "$file_path"'
             fi
-            echo -e ${YLW}' \u2714 '$file_path${NC}
+            echo -e ${YLW}' '${CHK}' '$file_path${NC}
         fi
     done
 }
@@ -371,19 +372,25 @@ install () {
 
 install_pre_deps () {
     local pkgs="screen jq curl wget git"
-    local header="Installing pre-dependencies to run the script"
+    local header="Installing pre-dependencies to run the script..."
     local footer="Pre-dependencies installed"
     install "$pkgs" "$header" "$footer"
 }
 
 install_deb_libssl1 () {
-    arch="_"$(get_arch)
-    wget -qO libssl1.1.deb http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.0l-1~deb9u6$arch.deb
-    sudo dpkg -i libssl1.1.deb
+    local arch="_"$(get_arch)
+    local local=/tmp/libssl1.1.deb
+    if test -n "$local"; then
+        url="http://security.debian.org/debian-security/pool/updates/main"
+        url="$url/o/openssl/libssl1.1_1.1.0l-1~deb9u6$arch.deb"
+        wget -qO "$local" "$url"
+    fi
+    sudo dpkg -i "$local" > /dev/null 2>&1
 }
 
 install_deps () {
-    local pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev libclang-dev"
+    local pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev \
+                libclang-dev"
     local header="Installing dependencies"
     local footer="Dependencies installed"
     install "$pkgs" "$header" "$footer"
@@ -391,9 +398,9 @@ install_deps () {
     # if Ubuntu 22.04, install libssl1.1 from debian repo.
     if [ $(get_ubuntu_ver) = '22.04' ]; then
         if [ -z "$(dpkg -l | grep libssl1.1)" ]; then
-            echo -e ${YLW}'Installing libssl1.1\e[0m'${NC}
+            echo -en 'Installing libssl1.1 '
             install_deb_libssl1
-            echo -e ${YLW}'libssl1.1 installed\e[0m'${NC}
+            echo -e ${YLW}${CHK}${NC}
         fi
     fi
 }
@@ -421,13 +428,13 @@ download_bins () {
     vr=$(version remote)
     remote=$(get_latest_release_url)
     file="$(basename "${remote}")"
-    local=/tmp/$file
+    local local=/tmp/$file
     if test -n "$local"; then
         wget -qO $local "$remote"
     fi
     tar -xzf $local -C $MASSA_PATH
     echo 'export massa_version='$vr >> $HOME/.profile
-    echo -e ${GRN}'\u2714 Binaries are downloaded'${NC}
+    echo -e ${GRN}${CHK}' Binaries are downloaded'${NC}
 }
 
 services () {
@@ -435,10 +442,10 @@ services () {
         sed 's/$massa_password/'$massa_password'/g')
     save service
     sudo systemctl daemon-reload
-    sudo systemctl enable massad  > /dev/null 2>&1
+    sudo systemctl enable massad > /dev/null 2>&1
     sudo systemctl restart massad
     sleep 1
-    echo -e ${GRN}" \u2714 Massa Service is "$(systemctl is-active massad)${NC}
+    echo -e ${GRN}" ${CHK} Massa Service is "$(systemctl is-active massad)${NC}
 }
 
 keys () {
@@ -460,7 +467,7 @@ keys () {
             * ) echo [y]es or [n]o?;
         esac
     done
-    footer=${GRN}"\u2714 Key "$footer${NC}
+    footer=${GRN}${CHK}" Key "$footer${NC}
     echo -e "$footer"
     echo -e ''
     massa_client=$(get_bin_loc massa-client)
