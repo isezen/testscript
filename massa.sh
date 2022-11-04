@@ -64,11 +64,11 @@ EOF
 script_node_status=$(cat <<EOF
 #!/bin/bash
 # Path: $HOME/.local/bin/node-status
-echo -e "\e[32m \u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
+echo -e "\e[32m\u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
 ns=\$(massa-client get_status -p \$massa_password)
-if  [ -z "$(echo "$ns" | grep "os error 111")" ]; then
-    echo -e "\033[0;31m\$(echo "\$ns" | grep "Version")\e[0m"
-    echo -e "\033[1;33m \u2714 \$(echo "\$ns" | grep "Node's IP")\e[0m"
+if  [ -z "$(echo "\$ns" | grep "os error 111")" ]; then
+    echo -e "\033[0;31m\u2714 \$(echo "\$ns" | grep Version)\e[0m"
+    echo -e "\033[1;33m\u2714 \$(echo "\$ns" | grep "Node's IP")\e[0m"
 
     echo -e "\nConfig:"
     echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
@@ -517,8 +517,6 @@ info () {
     echo "$cmds"
     line
     echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
-    echo -e "${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
-    echo -e "${BLU}     - https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
     line
 }
 
@@ -552,6 +550,9 @@ install_pre_deps # install required packages for the script
 cd $HOME
 opts="Install"
 vr=$(version remote)
+echo -e "${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
+echo -e "${BLU}     \xF0\x9F\x94\x97 https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
+line
 installed=$(is_installed)
 if [ -n "$installed" ]; then
     vc=$(version)
