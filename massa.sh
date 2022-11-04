@@ -397,7 +397,7 @@ install_deps () {
 }
 
 set_password () {
-    [ -z "$(grep "^export massa_password*" $HOME/.profile)" ] && massa_password=
+    [ -z "$(grep "^export massa_password*" $HOME/.profile)" ] && unset massa_password
     if [ ! "$massa_password" ]; then
         echo "################################################################"
         echo -e ""
