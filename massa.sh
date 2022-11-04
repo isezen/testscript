@@ -145,7 +145,7 @@ get_ip6 () { ip addr | grep inet6 | grep "scope global" | awk '{$1=$1};1' | \
              awk '{print $2}' | awk -F'/' '{print $1}'; }
 get_ip_type () {
     while true; do
-        read -p "What kind of IP do you have? (ipv-[4]/6): " ip_type
+        read -p "Which IP do you want to use? (ipv-[4]/6): " ip_type
         ip_type=${ip_type:-4}
         case $ip_type in 
             [4] ) break;;
@@ -184,17 +184,23 @@ add_bootstrap_list () {
                 * ) echo [y]es or [n]o?;
             esac
         done
+        if [ "$yn" = "y" ]; then
+            echo "$bootstrap_list" >> $CONFIG_TOML
+        fi
     fi
 }
 
 create_config () {
     ip=$(get_ip)
-    echo -e "\nYour external IPv4 address is ${YLW}$ip${NC}"
+    echo -e "Your external IPv4 address is ${YLW}$ip${NC}"
     ip6=$(get_ip6)
     if [ -n "$ip6" ]; then
-        echo -e "\nYour external IPv6 address is ${YLW}$ip6${NC}"
+        echo -e "Your external IPv6 address is ${YLW}$ip6${NC}"
+        get_ip_type
     fi
-    get_ip_type
+    if [ "$ip_type" -eq "6" ]; then
+        ip=$ip6
+    fi
     echo "[network]" > $CONFIG_TOML
     echo "routable_ip = \"$ip\"" >> $CONFIG_TOML
     if [ "$ip_type" -eq "4" ]; then
@@ -205,9 +211,6 @@ create_config () {
         echo "bind = \"$BOOTSTRAP_IP\"" >> $CONFIG_TOML
     fi
     add_bootstrap_list
-    if [ "$yn" = "y" ]; then
-        echo "$bootstrap_list" >> $CONFIG_TOML
-    fi
 }
 
 file_exist () {
