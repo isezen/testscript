@@ -22,7 +22,7 @@ NC="\e[0m"; GRN="\e[32m"
 RED='\033[1;31m'; YLW='\033[1;33m'
 ORG='\033[0;33m'; BLU='\033[0;34m'
 PRP='\033[0;35m'; CYN='\033[0;36m'
-CHK=''\xE2\x9C\x94''
+CHK='\xE2\x9C\x94'
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 
 header=$(cat <<EOF
@@ -152,13 +152,25 @@ get_ip_type () {
     done
 }
 
-add_path_to_profile () {
-    exp='export PATH="$PATH:$HOME/.local/bin"'
+add2profile () {
+    exp=${1:-'export PATH="$PATH:$HOME/.local/bin"'}
     exist=$(grep "$exp" $HOME/.profile)
     if [ -z "$exist" ]; then
         echo -e "$exp" >> $HOME/.profile
     fi
 }
+add_profile_local_bin () {
+    add2profile 'export PATH="$PATH:$HOME/.local/bin"'
+}
+add_profile_version () {
+    local vr=$(version remote)
+    add2profile 'export massa_version='$vr
+}
+add_profile_pass () {
+    add2profile 'export massa_password='$1
+}
+
+
 
 add_bootstrap_list () {
     while true; do
@@ -419,8 +431,7 @@ install_deps () {
 }
 
 set_password () {
-    psw_exist=$(grep "^export massa_password*" $HOME/.profile)
-    if [ -z "$psw_exist" ]; then
+    if [ -z "$(grep "^export massa_password*" $HOME/.profile)" ]; then
         unset massa_password
     fi
     if [ ! "$massa_password" ]; then
@@ -430,23 +441,22 @@ set_password () {
             read -p 'Enter a password for Massa: ' massa_password
         done
         stty echo
-        echo 'export massa_password='$massa_password >> $HOME/.profile
+        add_profile_pass $massa_password
         echo -e ""
     fi
     source $HOME/.profile
 }
 
 download_bins () {
-    local vr=$(version remote)
-    remote=$(get_latest_release_url)
-    file="$(basename "${remote}")"
+    local remote=$(get_latest_release_url)
+    local file="$(basename "${remote}")"
     local local=/tmp/$file
     if test -n "$local"; then
         wget -qO $local "$remote"
     fi
     tar -xzf $local -C $MASSA_PATH
-    echo 'export massa_version='$vr >> $HOME/.profile
-    echo -e ${GRN}${CHK}' Binaries are downloaded'${NC}
+    add_profile_version
+    echo -e "${GRN}${CHK} Binaries are downloaded${NC}"
 }
 
 services () {
@@ -515,11 +525,12 @@ clean () {
         local vc=$(version)
         declare -a patterns=('^export massa_password*' '^export massa_version*'
                              'export PATH="$PATH:$HOME/.local/bin"')
+        local PROFILE=$HOME/.profile
         for pat in "${patterns[@]}"
         do
-            [ -n "$(grep "$pat" $HOME/.profile)" ] && 
-            grep -v "$pat" .profile > .profile.tmp && 
-            mv .profile.tmp .profile
+            [ -n "$(grep "$pat" $PROFILE)" ] && 
+            grep -v "$pat" $PROFILE > $PROFILE.tmp && 
+            mv $PROFILE.tmp $PROFILE
         done
         rm -r massa 2> /dev/null
         rm $(get_file_paths script) 2> /dev/null
