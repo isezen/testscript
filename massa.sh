@@ -545,7 +545,7 @@ clean () {
         sudo systemctl disable --now massad 2> /dev/null
         sudo rm $(get_file_paths service) 2> /dev/null
         sudo systemctl daemon-reload 2> /dev/null
-        echo -e ""${YLW}"Massa $vc"${NC}" removed from the system."
+        echo -e ""${YLW}"Massa $vc"${NC}" removed from the system :("
     fi
 }
 # -------------------------------------------------------------
