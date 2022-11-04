@@ -67,12 +67,12 @@ script_node_status=$(cat <<EOF
 echo -e "\e[32m \u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
 ns=\$(massa-client get_status -p \$massa_password)
 if  [ -z "$(echo "$ns" | grep "os error 111")" ]; then
-    echo -e "\033[0;31m$(echo "\$ns" | grep "Version")\e[0m"
-    echo -e "\$(echo "\$ns" | grep "Node's IP")"
+    echo -e "\033[0;31m\$(echo "\$ns" | grep "Version")\e[0m"
+    echo -e "\033[1;33m \u2714 \$(echo "\$ns" | grep "Node's IP")\e[0m"
 
     echo -e "\nConfig:"
     echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
-    echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m\n"
     echo -e "Episode ends in:\033[0;35m"
     massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
 
@@ -83,6 +83,7 @@ if  [ -z "$(echo "$ns" | grep "os error 111")" ]; then
 else
     echo -e "\033[0;31m\xE2\x8C\x9A Massa is currently bootstrapping\xE2\x80\xA6 \xE2\x98\x95\e[0m"
 fi
+echo -e ''
 EOF
 )
 service_massad=$(cat <<EOF
@@ -505,12 +506,6 @@ keys () {
     $massa_client $cmd "$secret_key" -p $massa_password > /dev/null 2>&1
 }
 
-rolls () {
-    cd $HOME
-    wget -q https://api.testnet.run/massa_rolls.sh -O rolls.sh && chmod +x rolls.sh
-    screen -dmS autorolls ./rolls.sh
-}
-
 info () {
     source $PROFILE
     echo -e ${GRN}"INFO:"${NC}
@@ -520,15 +515,11 @@ info () {
     cmds=$(echo "$cmds" | sed 's/^/ | /')
     echo -e "Available commands:"
     echo "$cmds"
+    line
     echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
     echo -e "${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
     echo -e "${BLU}     - https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
     line
-    # ROLLS="screen -r"
-    # echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
-    # echo -e ${RED}"! Please don't close the screen."${NC}
-    # echo -e ${RED}"! Just use the CTRL+A+D key combination to leave the screen."${NC}
-    # line
 }
 
 clean () {
