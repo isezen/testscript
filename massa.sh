@@ -429,7 +429,7 @@ set_password () {
 }
 
 download_bins () {
-    vr=$(version remote)
+    local vr=$(version remote)
     remote=$(get_latest_release_url)
     file="$(basename "${remote}")"
     local local=/tmp/$file
@@ -532,12 +532,12 @@ opts="Install"
 vr=$(version remote)
 installed=$(is_installed)
 if [ -n "$installed" ]; then
+    vc=$(version)
     opts+=" Uninstall"
     txt+='\n'"$(echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system.")"
     txt+='\n'"$(wallet_str)"
     txt+='\n'"$(echo -e ${CYN}"\xE2\x9A\xA0 If you select [1], current Massa installation will be completely removed."${NC})"
     #
-    vc=$(version)
     update=$([ "$vc" != "$vr" ] && echo "Update" || echo "")
     opts+=" "$update
     if [ -n "$update" ]; then
