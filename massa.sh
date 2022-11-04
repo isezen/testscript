@@ -511,6 +511,8 @@ info () {
     echo -e "Available commands:"
     echo "$cmds"
     echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
+    echo -e "${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link:"
+    echo -e "${BLU} - https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
     line
     # ROLLS="screen -r"
     # echo -e "The buy_rolls process happens automatically, to check status: ${BLU}'$ROLLS'${NC}"
