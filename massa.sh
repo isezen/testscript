@@ -565,7 +565,7 @@ do
       break
       ;;
     Exit)
-        echo -e "${RED}-ByE\xE2\x9D\xA3\xF0\x9F\x98\x8B${NC}"
+        echo -e "${RED}-ByE\xE2\x9D\xA3\xF0\x9F\x98\x8B${NC}\n"
       break
       ;;
     *)
