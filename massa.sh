@@ -267,16 +267,20 @@ is_installed () {
 }
 
 get_wallet () {
-    what=$(echo "${1:-address secret public}" | awk '{print tolower($0)}')
-    addr=
-    massa_client=$(get_bin_loc massa-client)
+    local what=$(echo "${1:-address secret public}" | awk '{print tolower($0)}')
+    local addr=
+    local massa_client=$(get_bin_loc massa-client)
     if [[ -n "$massa_client" ]]; then
         for w in $what
         do
-            ret=$($massa_client wallet_info -p $massa_password  2> /dev/null \
-                  | grep -i $w)
-            col=$([[ $w == "address" ]] && echo '$2' || echo '$3')
-            addr+=$(echo $ret | awk "{print $col}")"\n"
+            local ret=$($massa_client wallet_info -p $massa_password  \
+                        2> /dev/null | grep -i $w)
+            local col=$([[ $w == "address" ]] && echo '$2' || echo '$3')
+            val=$(echo $ret | awk "{print $col}")
+            if [ -z "$val" ]; then
+                val='NOT SET'
+            fi
+            addr+=$(echo "$val\n")
         done
         addr="${addr%??}"
     fi
@@ -287,9 +291,6 @@ wallet_str () {
     secret=$(get_wallet secret)
     public=$(get_wallet public)
     address=$(get_wallet address)
-    secret=$([ -z "$secret" ] && echo "NOT SET" || echo "$secret")
-    public=$([ -z "$public" ] && echo "NOT SET" || echo "$public")
-    address=$([ -z "$address" ] && echo "NOT SET" || echo "$address")
     line
     echo -e "Secret Key : ${RED}$secret${NC}"
     echo -e "Public Key : ${GRN}$public${NC}"
@@ -587,3 +588,7 @@ do
       ;;
   esac
 done
+
+if [ -z "$w" ]; then
+    echo "Empty"
+fi
