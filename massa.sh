@@ -332,9 +332,13 @@ remote () {
 }
 
 version () {
-    v=$massa_version
-    echo $([ -z "$1" ] && [ -z "$v" ] && echo "NOT SET" || 
-           remote | jq -r ".tag_name")
+    type=${1:-local}
+    if [  "$type" = "local" ]; then
+        echo $([ -z "$massa_version" ] && echo "NOT SET" || 
+           echo $massa_version)
+    else
+        echo "$(remote | jq -r ".tag_name")"
+    fi
 }
 
 get_latest_release_url () {
