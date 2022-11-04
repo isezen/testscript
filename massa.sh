@@ -152,6 +152,14 @@ get_ip_type () {
     done
 }
 
+add_path_to_profile () {
+    exp='export PATH="$PATH:$HOME/.local/bin"'
+    exist=$(grep "$exp" $HOME/.profile)
+    if [ -z "$exist" ]; then
+        echo -e "$exp" >> $HOME/.profile
+    fi
+}
+
 add_bootstrap_list () {
     while true; do
         read -p "Do you want to add bootstrap list? (y/[n]) " yn
@@ -421,7 +429,6 @@ set_password () {
             echo -e ""
             read -p 'Enter a password for Massa: ' massa_password
         done
-        # read -p 'Enter a password for Massa: ' massa_password
         stty echo
         echo 'export massa_password='$massa_password >> $HOME/.profile
         echo -e ""
@@ -505,15 +512,15 @@ info () {
 clean () {
     if [ -n "$(is_installed)" ]; then
         cd $HOME
-        vc=$(version)
-        pat="^export massa_password*"
-        [ -n "$(grep "$pat" $HOME/.profile)" ] && 
-        grep -v "$pat" .profile > .profile.tmp && 
-        mv .profile.tmp .profile
-        pat="^export massa_version*"
-        [ -n "$(grep "$pat" $HOME/.profile)" ] && 
-        grep -v "$pat" .profile > .profile.tmp && 
-        mv .profile.tmp .profile
+        local vc=$(version)
+        declare -a patterns=('^export massa_password*' '^export massa_version*'
+                             'export PATH="$PATH:$HOME/.local/bin"')
+        for pat in "${patterns[@]}"
+        do
+            [ -n "$(grep "$pat" $HOME/.profile)" ] && 
+            grep -v "$pat" .profile > .profile.tmp && 
+            mv .profile.tmp .profile
+        done
         rm -r massa 2> /dev/null
         rm $(get_file_paths script) 2> /dev/null
         sudo systemctl disable --now massad 2> /dev/null
@@ -524,7 +531,7 @@ clean () {
 }
 # -------------------------------------------------------------
 # MAIN
-txt=$(echo -e "$header" | sed 's/^/                            /')
+txt=$(echo -e "$header" | sed 's/^/                                /')
 txt=$(echo -e "${RED}$txt${NC}")"\n"
 
 install_pre_deps # install required packages for the script
