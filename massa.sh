@@ -558,9 +558,7 @@ do
       break
       ;;
     Update)
-    echo -e '\e[1;32mThe updating process begins...\e[0m'
-    echo -e ''
-    echo -e '\e[1;32mSoon...'
+    echo -e '\e[1;35m\xF0\x9F\x9A\x80 Coming Soon...\e[0m'
     done_process
       break
       ;;
