@@ -533,10 +533,9 @@ if [ -n "$(is_installed)" ]; then
 fi
 opts+=" Exit"
 
-PS3="- What would you like to do?: "
+PS3=$'\n'$'\033[0;33m'"⬣ What would you like to do?: "
 select opt in $opts;
 do
-
   case $opt in
     Install)
     clean
@@ -564,7 +563,7 @@ do
       break
       ;;
     Exit)
-        echo -e '\e[1;32mByE! \033[0;33m:)\e[0m'
+        echo -e '\e[1;32mByE! \033[0;33m ^_^\e[0m'
       break
       ;;
     *)
