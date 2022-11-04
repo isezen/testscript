@@ -169,7 +169,6 @@ create_config () {
     if [ "$yn" = "y" ]; then
         echo "$bootstrap_list" >> $CONFIG_TOML
     fi
-    echo $yn
 }
 
 get_arch () {
