@@ -545,9 +545,12 @@ clean () {
 # MAIN
 txt=$(echo -e "$header" | sed 's/^/                                /')
 txt=$(echo -e "${RED}$txt${NC}")"\n"
-txt+='\n'"${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link below:"
-txt+='\n'"${BLU}\xF0\x9F\x94\x97 https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
-txt+='\n'$(line2)
+ip6=$(get_ip6)
+if [ -z "$ip6" ]; then
+    txt+='\n'"${YLW}NOTE:${NC} To enable IPv6 on DigitalOcean, refer the link below:"
+    txt+='\n'"${BLU}\xF0\x9F\x94\x97 https://docs.digitalocean.com/products/networking/ipv6/how-to/enable/#on-existing-droplets${NC}"
+    txt+='\n'$(line2)
+fi
 
 
 install_pre_deps # install required packages for the script
