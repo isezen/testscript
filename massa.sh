@@ -524,7 +524,8 @@ clean () {
 }
 # -------------------------------------------------------------
 # MAIN
-txt=$(echo -e "${RED}$header${NC}")"\n"
+txt=$(echo -e "$header" | sed 's/^/                            /')
+txt=$(echo -e "${RED}$txt${NC}")"\n"
 
 install_pre_deps # install required packages for the script
 
@@ -588,7 +589,3 @@ do
       ;;
   esac
 done
-
-if [ -z "$w" ]; then
-    echo "Empty"
-fi
