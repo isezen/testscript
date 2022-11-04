@@ -323,7 +323,7 @@ remote () {
 
 version () {
     v=$massa_version
-    if [ -z "$1" ] && [ -n "$v" ]; then
+    if [ -z "$1" ] && [ -z "$v" ]; then
         v="NOT SET"
     else
         v=$(remote | jq -r ".tag_name")
@@ -519,7 +519,7 @@ vr=$(version remote)
 if [ -n "$(is_installed)" ]; then
     opts+=" Uninstall"
     vc=$(version)
-    update=$([ $vc != $vr ] && echo "Update" || echo "")
+    update=$([ "$vc" != "$vr" ] && echo "Update" || echo "")
     opts+=" "$update
     echo ""
     echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system."
