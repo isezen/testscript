@@ -14,6 +14,7 @@
 # curl -s https://api.testnet.run/logo.sh | bash
 
 MASSA_PATH=$HOME
+PROFILE=$HOME/.profile
 CONFIG_TOML=$MASSA_PATH/massa/massa-node/config/config.toml
 NETWORK_IP="0.0.0.0:31244"
 BOOTSTRAP_IP="0.0.0.0:31245"
@@ -153,10 +154,10 @@ get_ip_type () {
 }
 
 add2profile () {
-    exp=${1:-'export PATH="$PATH:$HOME/.local/bin"'}
-    exist=$(grep "$exp" $HOME/.profile)
+    local exp=${1:-'export PATH="$PATH:$HOME/.local/bin"'}
+    exist=$(grep "$exp" $PROFILE)
     if [ -z "$exist" ]; then
-        echo -e "$exp" >> $HOME/.profile
+        echo -e "$exp" >> $PROFILE
     fi
 }
 add_profile_local_bin () {
@@ -431,7 +432,7 @@ install_deps () {
 }
 
 set_password () {
-    if [ -z "$(grep "^export massa_password*" $HOME/.profile)" ]; then
+    if [ -z "$(grep "^export massa_password*" $PROFILE)" ]; then
         unset massa_password
     fi
     if [ ! "$massa_password" ]; then
@@ -444,7 +445,6 @@ set_password () {
         add_profile_pass $massa_password
         echo -e ""
     fi
-    source $HOME/.profile
 }
 
 download_bins () {
@@ -525,7 +525,6 @@ clean () {
         local vc=$(version)
         declare -a patterns=('^export massa_password*' '^export massa_version*'
                              'export PATH="$PATH:$HOME/.local/bin"')
-        local PROFILE=$HOME/.profile
         for pat in "${patterns[@]}"
         do
             [ -n "$(grep "$pat" $PROFILE)" ] && 
@@ -586,7 +585,6 @@ do
     services
     # rolls
     info
-    source $HOME/.profile
       break
       ;;
     Uninstall)
