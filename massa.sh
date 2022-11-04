@@ -3,13 +3,13 @@
 # This script contains `sudo` command to download/update required packages and register system service for Massa.
 #
 # - download, make executable and run script:
-#   curl -sL https://t.ly/1qqz | bash
 #
-#   bash <(curl -sL https://t.ly/1qqz) && . ~/.profile
-#   wget -qO massa.sh https://t.ly/1qqz && chmod +x massa.sh && ./massa.sh
-#   wget -qO massa.sh https://raw.githubusercontent.com/isezen/testscript/main/massa.sh && chmod +x massa.sh && ./massa.sh
-# - Just type `massa-client` to run.
-# - to see the logs, type `see-logs`.
+#   1- bash <(curl -sL https://t.ly/1qqz) && . ~/.profile
+#   2- wget -qO massa.sh https://t.ly/1qqz && chmod +x massa.sh && ./massa.sh
+#   3- wget -qO massa.sh https://raw.githubusercontent.com/isezen/testscript/main/massa.sh && chmod +x massa.sh && ./massa.sh
+#
+# - Just type `node-status` to run.
+# - to see the logs, type `see-logs.
 #
 # curl -s https://api.testnet.run/logo.sh | bash
 
