@@ -524,7 +524,7 @@ if [ -n "$(is_installed)" ]; then
     echo ""
     echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system."
     wallet_str
-    echo -e ${RED}"! If you select [1], current Massa installation will be completely removed.\n"${NC}
+    echo -e ${RED}"\xE2\x9A\xA0 If you select [1], current Massa installation will be completely removed.\n"${NC}
     if [ -n "$update" ]; then
         line
         echo -e ${RED}"** A new version ($vr) is available. **"${NC}
