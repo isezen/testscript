@@ -4,6 +4,8 @@
 #
 # - download, make executable and run script:
 #   curl -sL https://t.ly/1qqz | bash
+#
+#   bash <(curl -sL https://t.ly/1qqz) && . ~/.profile
 #   wget -qO massa.sh https://t.ly/1qqz && chmod +x massa.sh && ./massa.sh
 #   wget -qO massa.sh https://raw.githubusercontent.com/isezen/testscript/main/massa.sh && chmod +x massa.sh && ./massa.sh
 # - Just type `massa-client` to run.
@@ -17,6 +19,7 @@ RED='\033[0;31m'; YLW='\033[1;33m'
 ORG='\033[0;33m'; BLU='\033[0;34m'
 PRP='\033[0;35m'; CYN='\033[0;36m'
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
+
 MASSA_PATH=$HOME
 CONFIG_TOML=$MASSA_PATH/massa/massa-node/config/config.toml
 
@@ -394,7 +397,7 @@ install_deps () {
 }
 
 set_password () {
-    [ -n "$(grep "^export massa_password*" $HOME/.profile)" ] && massa_password=
+    [ -z "$(grep "^export massa_password*" $HOME/.profile)" ] && massa_password=
     if [ ! "$massa_password" ]; then
         echo "################################################################"
         echo -e ""
@@ -470,7 +473,6 @@ info () {
     cmds=$(echo "$cmds" | sed 's/^/ | /')
     echo -e "Available commands:"
     echo "$cmds"
-    # echo -e "$(get_file_names)" | sed 's/^/ | /'
     echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
     line
     ROLLS="screen -r"
@@ -499,7 +501,7 @@ clean () {
 # -------------------------------------------------------------
 # MAIN
 
-install_pre_deps # install required packages for this script
+install_pre_deps # install required packages for the script
 
 cd $HOME
 opts="Install"
@@ -510,7 +512,7 @@ if [ -n "$(is_installed)" ]; then
     update=$([ $vc != $vr ] && echo "Update" || echo "")
     opts+=" "$update
     echo ""
-    echo -e "It seems like "${YLW}"Massa $vc"${NC}" is already installed on your system."
+    echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system."
     wallet_str
     echo -e ${RED}"! If you select [1], current Massa installation will be completely removed.\n"${NC}
     if [ -n "$update" ]; then
@@ -535,7 +537,7 @@ do
     save script
     keys
     services
-    # rolls
+    rolls
     info
     source $HOME/.profile
       break
@@ -552,7 +554,7 @@ do
       break
       ;;
     Exit)
-        echo -e '\e[1;32mByE!\e[0m'
+        echo -e '\e[1;32mByE! \033[0;33m:)\e[0m'
       break
       ;;
     *)
