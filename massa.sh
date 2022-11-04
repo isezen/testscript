@@ -513,6 +513,7 @@ clean () {
 }
 # -------------------------------------------------------------
 # MAIN
+txt=$(echo -e "${RED}$header${NC}")"\n"
 
 install_pre_deps # install required packages for the script
 
@@ -520,7 +521,6 @@ cd $HOME
 opts="Install"
 vr=$(version remote)
 installed=$(is_installed)
-txt=$(echo -e "${RED}$header${NC}")"\n"
 if [ -n "$installed" ]; then
     opts+=" Uninstall"
     txt+='\n'"$(echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system.")"
