@@ -400,13 +400,20 @@ install_deps () {
 }
 
 set_password () {
-    [ -z "$(grep "^export massa_password*" $HOME/.profile)" ] && unset massa_password
+    psw_exist=$(grep "^export massa_password*" $HOME/.profile)
+    if [ -z "$psw_exist" ]; then
+        unset massa_password
+    fi
     if [ ! "$massa_password" ]; then
         echo "################################################################"
-        echo -e ""
         stty -echo
-        read -p 'Enter a password for Massa: ' massa_password
+        while [ -z "${massa_password}" ]; do
+            echo -e ""
+            read -p 'Enter a password for Massa: ' massa_password
+        done
+        # read -p 'Enter a password for Massa: ' massa_password
         stty echo
+        echo $massa_password
         echo 'export massa_password='$massa_password >> $HOME/.profile
         echo -e ""
         echo "################################################################"
