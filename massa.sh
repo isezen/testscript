@@ -19,21 +19,18 @@ NETWORK_IP="0.0.0.0:31244"
 BOOTSTRAP_IP="0.0.0.0:31245"
 # -------------------------------------------------------------
 NC="\e[0m"; GRN="\e[32m"
-RED='\033[0;31m'; YLW='\033[1;33m'
+RED='\033[1;31m'; YLW='\033[1;33m'
 ORG='\033[0;33m'; BLU='\033[0;34m'
 PRP='\033[0;35m'; CYN='\033[0;36m'
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 
 header=$(cat <<EOF
-                             
-                             
     )       )             )  
    (     ( /(  (   (   ( /(  
    )\  ' )(_)) )\  )\  )(_)) 
  _((_)) ((_)_ ((_)((_)((_)_  
 | '  \()/ _\` |(_-<(_-</ _\` | 
 |_|_|_| \__,_|/__//__/\__,_| 
-                             
 EOF
 )
 echo -e "${RED}$header${NC}"
@@ -551,7 +548,7 @@ do
     save script
     keys
     services
-    rolls
+    # rolls
     info
     source $HOME/.profile
       break
@@ -568,7 +565,7 @@ do
       break
       ;;
     Exit)
-        echo -e '\e[1;32mByE! \033[0;33m ^_^\e[0m'
+        echo -e "${RED}-ByE\xE2\x9D\xA3\xF0\x9F\x98\x8B${NC}"
       break
       ;;
     *)
