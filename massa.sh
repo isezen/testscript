@@ -353,10 +353,10 @@ to_install () {
 }
 
 install () {
-    installed=false
-    to_install=$(to_install "$1")
-    header="${2:-Installing dependencies}"
-    footer="${3:-Dependencies installed}"
+    locall installed=false
+    local to_install=$(to_install "$1")
+    local header="${2:-Installing dependencies}"
+    local footer="${3:-Dependencies installed}"
     if test -n "$to_install"; then
         echo -e ${YLW}"$header\e[0m"${NC}
         echo -e ''
@@ -383,9 +383,9 @@ install_deb_libssl1 () {
 }
 
 install_deps () {
-    pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev libclang-dev"
-    header="Installing dependencies"
-    footer="Dependencies installed"
+    local pkgs="build-essential clang librocksdb-dev pkg-config libssl-dev libclang-dev"
+    local header="Installing dependencies"
+    local footer="Dependencies installed"
     install "$pkgs" "$header" "$footer"
     #
     # if Ubuntu 22.04, install libssl1.1 from debian repo.
