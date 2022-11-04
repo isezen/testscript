@@ -25,12 +25,14 @@ PRP='\033[0;35m'; CYN='\033[0;36m'
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 
 header=$(cat <<EOF
+
     )       )             )  
    (     ( /(  (   (   ( /(  
    )\  ' )(_)) )\  )\  )(_)) 
  _((_)) ((_)_ ((_)((_)((_)_  
 | '  \()/ _\` |(_-<(_-</ _\` | 
 |_|_|_| \__,_|/__//__/\__,_| 
+                   \xF0\x9F\x94\xA5 Fire-\xF0\x9D\x9B\xBC
 EOF
 )
 echo -e "${RED}$header${NC}"
