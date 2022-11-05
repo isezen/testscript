@@ -595,9 +595,9 @@ do
     create_config
     set_password
     save script
+    add_profile_local_bin
     services
     keys
-    add_profile_local_bin
     info
       break
       ;;
