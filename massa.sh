@@ -140,6 +140,9 @@ EOF
 
 line2 () { echo -e ${PRP}"==============================================================="${NC}; }
 line1 () { echo -e ${PRP}"---------------------------------------------------------------"${NC}; }
+# get_last_sha () {
+#     ret=$(curl -s https://api.github.com/repos/isezen/testscript/commits | jq)
+# }
 get_ubuntu_ver () { echo $(lsb_release -r | awk 'BEGIN{FS=":"} {print $2}' | 
     awk '{$1=$1};1'); }
 get_ip () { echo $(curl -s -4 ifconfig.co); }
@@ -504,7 +507,7 @@ keys () {
     echo -e "$footer"
     echo -e ''
     massa_client=$(get_bin_loc massa-client)
-    $massa_client $cmd "$secret_key" -p $massa_password > /dev/null 2>&1
+    $massa_client $cmd "$secret_key" -p $massa_password # > /dev/null 2>&1
 }
 
 info () {
