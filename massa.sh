@@ -197,6 +197,7 @@ add_bootstrap_list () {
 }
 
 create_config () {
+    ip_type=4
     ip=$(get_ip)
     echo -e "Your external IPv4 address is ${YLW}$ip${NC}"
     ip6=$(get_ip6)
