@@ -507,6 +507,8 @@ keys () {
     echo -e "$footer"
     echo -e ''
     massa_client=$(get_bin_loc massa-client)
+    echo "$massa_client"
+    echo $massa_password
     $massa_client $cmd "$secret_key" -p $massa_password # > /dev/null 2>&1
 }
 
