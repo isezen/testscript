@@ -592,12 +592,12 @@ do
     clean
     install_deps
     download_bins
+    keys
     create_config
     set_password
     save script
     add_profile_local_bin
     services
-    keys
     info
       break
       ;;
