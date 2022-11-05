@@ -166,6 +166,7 @@ add2profile () {
     if [ -z "$exist" ]; then
         echo -e "$exp" >> $PROFILE
     fi
+    source $PROFILE
 }
 add_profile_local_bin () {
     add2profile 'export PATH="$PATH:$HOME/.local/bin"'
