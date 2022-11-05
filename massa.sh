@@ -398,8 +398,8 @@ install () {
     if test -n "$to_install"; then
         echo -e ${YLW}"$header\e[0m"${NC}
         echo -e ''
-        sudo apt update
-        sudo apt install $to_install
+        sudo apt update > /dev/null 2>&1
+        sudo apt install $to_install -y > /dev/null 2>&1
         installed=true
     fi
     if [ "$installed" = true ] ; then
@@ -590,9 +590,9 @@ do
     create_config
     set_password
     save script
+    add_profile_local_bin
     services
     keys
-    add_profile_local_bin
     info
       break
       ;;
