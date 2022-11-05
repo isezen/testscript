@@ -595,6 +595,7 @@ do
     save script
     add_profile_local_bin
     services
+    sleep 5
     keys
     info
       break
