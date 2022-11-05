@@ -593,11 +593,11 @@ do
     clean
     install_deps
     download_bins
+    create_config
+    save script
     add_profile_local_bin
     set_password
     keys
-    create_config
-    save script
     services
     info
       break
