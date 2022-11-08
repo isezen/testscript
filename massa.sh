@@ -438,9 +438,11 @@ install_deps () {
     # install "$pkgs" "$header" "$footer"
     #
     # if Ubuntu 22.04, install libssl1.1 from debian repo.
-    if [ $(get_ubuntu_ver) = '22.04' ]; then
+    # if [ $(get_ubuntu_ver) = '22.04' ]; then
+    if [ $(awk 'BEGIN { print ('$(get_ubuntu_ver)' >= 22.04) ? "YES" : "NO" }') = 'YES' ]; then
+        echo "Ubuntu version is $(get_ubuntu_ver)"
         if [ -z "$(dpkg -l | grep libssl1.1)" ]; then
-            echo -en 'Installing libssl1.1 '
+            echo -en '  Installing libssl1.1 '
             install_deb_libssl1
             echo -e ${YLW}${CHK}${NC}
         fi
@@ -592,9 +594,9 @@ do
     clean
     install_deps
     download_bins
-    add_profile_local_bin
     create_config
     save script
+    add_profile_local_bin
     set_password
     keys
     services
