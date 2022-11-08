@@ -592,9 +592,9 @@ do
     clean
     install_deps
     download_bins
+    add_profile_local_bin
     create_config
     save script
-    add_profile_local_bin
     set_password
     keys
     services
