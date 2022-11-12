@@ -612,6 +612,7 @@ do
       ;;
     Scripts)
     save script
+    add_profile_local_bin
       break
       ;;
     Update)
