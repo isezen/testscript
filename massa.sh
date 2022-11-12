@@ -571,6 +571,7 @@ installed=$(is_installed)
 if [ -n "$installed" ]; then
     vc=$(version)
     opts+=" Uninstall"
+    opts+=" Scripts"
     txt+='\n'"$(echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system.")"
     txt+='\n'"$(wallet_str)"
     txt+='\n'"$(echo -e ${CYN}"\xE2\x9A\xA0 If you select [1], current Massa installation will be completely removed."${NC})"
@@ -607,6 +608,10 @@ do
       ;;
     Uninstall)
     clean
+      break
+      ;;
+    Scripts)
+    save script
       break
       ;;
     Update)
