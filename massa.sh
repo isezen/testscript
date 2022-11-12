@@ -65,6 +65,7 @@ script_node_status=$(cat <<EOF
 #!/bin/bash
 # Path: $HOME/.local/bin/node-status
 echo -e "\e[32m\u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
+echo -e "\$(massa-client wallet_info -p \$massa_password | grep Balance)"
 echo -e "\$(massa-client wallet_info -p \$massa_password | grep Rolls)"
 ns=\$(massa-client get_status -p \$massa_password)
 if  [ -z "\$(echo "\$ns" | grep "os error 111")" ]; then
