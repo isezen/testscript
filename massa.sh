@@ -565,19 +565,19 @@ fi
 install_pre_deps # install required packages for the script
 
 cd $HOME
-opts="Install"
+opts=("Install")
 vr=$(version remote)
 installed=$(is_installed)
 if [ -n "$installed" ]; then
     vc=$(version)
-    opts+=" Uninstall"
-    opts+=" Scripts"
+    opts+=("Uninstall")
+    opts+=("Update Scripts")
     txt+='\n'"$(echo -e "It seems like "${YLW}"Massa $vc"${NC}" is installed on your system.")"
     txt+='\n'"$(wallet_str)"
     txt+='\n'"$(echo -e ${CYN}"\xE2\x9A\xA0 If you select [1], current Massa installation will be completely removed."${NC})"
     #
     update=$([ "$vc" != "$vr" ] && echo "Update" || echo "")
-    opts+=" "$update
+    opts+=($update)
     if [ -n "$update" ]; then
         txt+='\n'$(line2)
         txt+='\n'$(echo -e ${RED}"\xF0\x9F\x93\xA6 A new version ($vr) is available."${NC})
@@ -587,13 +587,13 @@ fi
 echo -e "$txt"'\n'
 
 
-opts+=" Exit"
+opts+=("Exit")
 
 PS3=$'\n'$'\033[0;33m'"⬣ What would you like to do?: "
-select opt in $opts;
+select opt in "${opts[@]}";
 do
   case $opt in
-    Install)
+    "Install")
     clean
     install_deps
     download_bins
@@ -606,21 +606,21 @@ do
     info
       break
       ;;
-    Uninstall)
+    "Uninstall")
     clean
       break
       ;;
-    Scripts)
+    "Update Scripts")
     save script
     add_profile_local_bin
       break
       ;;
-    Update)
+    "Update")
     echo -e '\e[1;35m\xF0\x9F\x9A\x80 Coming Soon...\e[0m'
     done_process
       break
       ;;
-    Exit)
+    "Exit")
         echo -e "${RED}-ByE\xE2\x9D\xA3\xF0\x9F\x98\x8B${NC}\n"
       break
       ;;
