@@ -22,7 +22,6 @@ BOOTSTRAP_IP="0.0.0.0:31245"
 # -------------------------------------------------------------
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 URL=https://raw.githubusercontent.com/isezen/testscript/main
-echo "Loading..."
 source <(curl -s $URL/common.sh)
 
 header=$(cat <<EOF
@@ -279,32 +278,23 @@ services () {
 keys () {
     echo -e ''
     secret_key=
-    while true; do
-        read -p "Do you have a secret key? (y/[n]) " yn
-        yn=${yn:-n}
-        case $yn in 
-            [yY] )
-                footer="Added"
-                cmd=wallet_add_secret_keys
-                read -p 'Enter Secret Key: ' secret_key
-                break;;
-            [nN] )
-                footer="Generated"
-                cmd=wallet_generate_secret_key
-                break;;
-            * ) echo [y]es or [n]o?;
-        esac
-    done
-    footer=${GRN}${CHK}" Key "$footer${NC}
+    if is_yes "Do you have a secret key?"; then
+        footer="Added"
+        cmd=wallet_add_secret_keys
+        read -p 'Enter Secret Key: ' secret_key
+    else
+        footer="Generated"
+        cmd=wallet_generate_secret_key
+    fi
     massa_client=$(get_bin_loc massa-client)
     $massa_client $cmd "$secret_key" -p $massa_password > /dev/null 2>&1
-    echo -e "$footer"
+    msg_info "Key "$footer
     echo -e ''
 }
 
 info () {
     source $PROFILE
-    echo -e ${GRN}"INFO:"${NC}
+    echo -e ${G}"INFO:"${NONE}
     wallet_str
     cmds="$(get_file_names | sed 's/^/'$(tput setaf 2)'/')"
     cmds=$(echo "$cmds" | sed -e 's/$/'$(tput sgr0)'/')
@@ -312,7 +302,7 @@ info () {
     echo -e "Available commands:"
     echo "$cmds"
     line2
-    echo -e "${YLW}NOTE:${NC} Run ${BLU}'. ~/.profile'${NC} or ${CYN}log out & in${NC} to be able to run the commands."
+    echo -e "${Y}NOTE:${NONE} Run ${B}'. ~/.profile'${NONE} or ${C}log out & in${NONE} to be able to run the commands."
     line2
 }
 
@@ -329,9 +319,8 @@ clean () {
             mv $PROFILE.tmp $PROFILE
         done
         rm -r massa 2> /dev/null
-        rm $(get_file_paths script) 2> /dev/null
         sudo systemctl disable --now massad 2> /dev/null
-        sudo rm $(get_file_paths service) 2> /dev/null
+        sudo rm $(get_emb_cont_file_paths service) 2> /dev/null
         sudo systemctl daemon-reload 2> /dev/null
         echo -e ""${YLW}"Massa $vc"${NC}" removed from the system :("
     fi
@@ -391,6 +380,7 @@ do
       break
       ;;
     "Update")
+        sudo systemctl disable --now massad 2> /dev/null
         download_bins
         sudo systemctl restart massad
       break
