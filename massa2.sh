@@ -234,7 +234,7 @@ install_deps () {
         if [ -z "$(dpkg -l | grep libssl1.1)" ]; then
             echo -en '  Installing libssl1.1 '
             install_deb_libssl1
-            echo -e ${YLW}${CHK}${NC}
+            echo -e ${Y}${CHECK}${NONE}
         fi
     fi
 }
@@ -294,11 +294,6 @@ info () {
     source $PROFILE
     echo -e ${G}"INFO:"${NONE}
     wallet_str
-    cmds="$(get_file_names | sed 's/^/'$(tput setaf 2)'/')"
-    cmds=$(echo "$cmds" | sed -e 's/$/'$(tput sgr0)'/')
-    cmds=$(echo "$cmds" | sed 's/^/ | /')
-    echo -e "Available commands:"
-    echo "$cmds"
     line2
     echo -e "${Y}NOTE:${NONE} Run ${B}'. ~/.profile'${NONE} or ${C}log out & in${NONE} to be able to run the commands."
     line2
