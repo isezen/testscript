@@ -123,6 +123,19 @@ a2p () {
     source $PROFILE
 }
 
+# Get a password from $USER
+get_pass () {
+    local pass=
+    local prompt=${1:-"Enter a password: "}
+    stty -echo
+    while [ -z "${pass}" ]; do
+        echo -e ""
+        read -p "$prompt" pass
+    done
+    stty echo
+    echo "$pass"
+}
+
 # Check a package is already installed or not
 # Args:
 #   $1: Name of package
