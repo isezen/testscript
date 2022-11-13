@@ -163,11 +163,11 @@ is_yes () {
 is_pkg_exist () {
     local dist=$(get_linux_dist)
     if [ $dist == "Ubuntu" ]; then
-      ! [ -z "$(dpkg -l | grep $1)" ]
+      [ -z "$(dpkg -l | grep $1)" ]
     elif [ $dist == "macos" ]; then
         if [ -f "$(which port)" ]; then
             ret=$(port installed $1)
-            ! [ "$ret" != "None of the specified ports are installed." ]
+            [ "$ret" != "None of the specified ports are installed." ]
         fi
     fi
 }
