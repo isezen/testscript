@@ -114,6 +114,9 @@ get_ubuntu_ver () {
     [ "$(get_linux_dist)" = "Ubuntu" ] && echo $(lsb_releasef -r)
 }
 
+# String to lowercase
+tolower () { echo "$1" | awk '{print tolower($0)}'; }
+
 # Add a text to bash profile file if it does not exist
 # Default text is $HOME/.local/bin
 a2p () {
