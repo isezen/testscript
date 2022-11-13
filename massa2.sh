@@ -180,7 +180,7 @@ is_installed () {
 }
 
 get_wallet () {
-    local what=$(echo "${1:-address secret public}" | awk '{print tolower($0)}')
+    local what=$(tolower ${1:-"address secret public"})
     local addr=
     local massa_client=$(get_bin_loc massa-client)
     if [[ -n "$massa_client" ]]; then
@@ -189,10 +189,8 @@ get_wallet () {
             local ret=$($massa_client wallet_info -p $massa_password  \
                         2> /dev/null | grep -i $w)
             local col=$([[ $w == "address" ]] && echo '$2' || echo '$3')
-            val=$(echo $ret | awk "{print $col}")
-            if [ -z "$val" ]; then
-                val='NOT SET'
-            fi
+            local val=$(echo $ret | awk "{print $col}")
+            [ -z "$val" ] && val='NOT SET'
             addr+=$(echo "$val\n")
         done
         addr="${addr%??}"
