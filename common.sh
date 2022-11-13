@@ -269,3 +269,23 @@ save_embedded_content () {
         fi
     done
 }
+
+get_emb_cont_var_names () {
+    pattern=${1:-script}
+    vars="$(set | grep "^"$pattern"\_" | grep -v '_file' | 
+        awk -F= '{print $1}' | uniq)"
+    echo "$vars"
+}
+
+get_emb_cont_file_paths () {
+    pattern=${1:-script}
+    vars="$(get_emb_cont_var_names "$pattern")"
+    pat="^# Path:"
+    paths=
+    for v in $vars
+    do
+        content=$(eval echo \"\${$v}\")
+        paths+=$(echo "$content" | grep "$pat" | awk '{print $3}')" "
+    done
+    echo $paths
+}
