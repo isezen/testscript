@@ -41,6 +41,7 @@ BGW="\033[47m"
 # UNICODE CODES
 # -------------------------------------------------------------
 CHECK='\U02714'; WARN='\U026A1'; CROSS='\U274c'; NOTE='\U1F4D3'
+PACK='\U1F4E6'
 # -------------------------------------------------------------
 # FUNCTIONS:
 col () { echo -ne $1; echo -ne "$2"; echo -ne ${NONE}; }
@@ -53,7 +54,7 @@ cyn () { col $C "$1"; }
 wht () { col $W "$1"; }
 
 msg_info () { grn "$CHECK $1"; }
-msg_warn () { org "$WARN $1"; }
+msg_warn () { ylw "$WARN $1"; }
 msg_err  () { red "$CROSS $1"; }
 msg_note () { wht "$NOTE $1"; }
 
