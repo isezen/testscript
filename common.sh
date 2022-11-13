@@ -40,19 +40,21 @@ BGW="\033[47m"
 
 # UNICODE CODES
 # -------------------------------------------------------------
-CHK='\xE2\x9C\x94'
-
+CHECK='\U02714'; WARN='\U026A1'; CROSS='\U274c'
 # -------------------------------------------------------------
 # FUNCTIONS:
-col () { echo -ne $1; echo "$2"; echo -ne ${NONE}; }
+col () { echo -ne $1; echo -e "$2"; echo -ne ${NONE}; }
 red () { col $R "$1"; }
 grn () { col $G "$1"; }
-ylw () { col $EMY "$1"; }
+ylw () { col $Y "$1"; }
 blu () { col $B "$1"; }
 mgt () { col $M "$1"; }
 cyn () { col $C "$1"; }
-org () { col $Y "$1"; }
 wht () { col $W "$1"; }
+
+msg_info () { grn "$CHECK $1"; }
+msg_warn () { org "$WARN $1"; }
+msg_err  () { red "$CROSS $1"; }
 
 rep ()   { eval "printf -- '${1:-'-'}%.0s' {1.."${2:-80}"}"; }
 line ()  { col ${2:-$M} $(rep ${1:-'-'}); }
