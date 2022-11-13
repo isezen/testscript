@@ -4,7 +4,7 @@
 #
 # - download, make executable and run script:
 #
-#   1- bash <(curl -sL https://t.ly/1qqz) && . ~/.profile
+#   1- bash <(curl -sL https://raw.githubusercontent.com/isezen/testscript/main/massa2.sh) && . ~/.profile
 #   2- wget -qO massa.sh https://t.ly/1qqz && chmod +x massa.sh && ./massa.sh
 #   3- wget -qO massa.sh https://raw.githubusercontent.com/isezen/testscript/main/massa2.sh && chmod +x massa.sh && ./massa.sh
 #
@@ -337,6 +337,7 @@ clean () {
 }
 # -------------------------------------------------------------
 # MAIN
+cd $HOME
 # install required packages for the script
 install_pre_deps "screen jq curl wget git"
 clear
@@ -349,31 +350,25 @@ if [ -z "$(get_ip6)" ]; then
     txt+='\n'$(line2)
 fi
 
-cd $HOME
 opts=("Install")
 vr=$(version remote)
 if is_installed; then
     vc=$(version)
     opts+=("Uninstall")
-    opts+=("Update Scripts")
     txt+='\n'"$(echo -e "It seems like "$(blu "Massa $vc")" is installed on your system.")"
     txt+='\n'"$(wallet_str)"
     txt+='\n'$(msg_warn "If you select [1], current Massa installation will be completely removed.")
     #
-    update=$([ "$vc" != "$vr" ] && echo "Update" || echo "")
-    opts+=($update)
-    if [ -n "$update" ]; then
+    if [ "$vc" != "$vr" ]; then
+        opts+=("Update")
         txt+='\n'$(line2)
         txt+='\n'$(red "$PACK A new version ($vr) is available.")
         txt+='\n'$(line2)
     fi
 fi
 echo -e "$txt"'\n'
-
-
 opts+=("Exit")
 
-# PS3=$'\n'$'\033[0;33m'"⬣ What would you like to do?: "
 PS3=$'\n'$'\033[0;33m'"⬣ What would you like to do?: "
 select opt in "${opts[@]}";
 do
@@ -395,12 +390,12 @@ do
       break
       ;;
     "Update")
-        echo -e '\e[1;35m\xF0\x9F\x9A\x80 Coming Soon...\e[0m'
-        done_process
+        download_bins
+        sudo systemctl restart massad
       break
       ;;
     "Exit")
-        red "-ByE\xE2\x9D\xA3\xF0\x9F\x98\x8B\n"
+        red "-ByE\U1F60B\n"
       break
       ;;
     *)
