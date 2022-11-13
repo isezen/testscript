@@ -44,15 +44,15 @@ CHK='\xE2\x9C\x94'
 
 # -------------------------------------------------------------
 # FUNCTIONS:
-col () { echo -ne $1; echo $2; echo -ne ${NONE}; }
-red () { col $R $1; }
-grn () { col $G $1; }
-ylw () { col $EMY $1; }
-blu () { col $B $1; }
-mgt () { col $M $1; }
-cyn () { col $C $1; }
-org () { col $Y $1; }
-wht () { col $W $1; }
+col () { echo -ne $1; echo "$2"; echo -ne ${NONE}; }
+red () { col $R "$1"; }
+grn () { col $G "$1"; }
+ylw () { col $EMY "$1"; }
+blu () { col $B "$1"; }
+mgt () { col $M "$1"; }
+cyn () { col $C "$1"; }
+org () { col $Y "$1"; }
+wht () { col $W "$1"; }
 
 rep ()   { eval "printf -- '${1:-'-'}%.0s' {1.."${2:-80}"}"; }
 line ()  { col ${2:-$M} $(rep ${1:-'-'}); }
@@ -75,21 +75,21 @@ get_ip6 () { ip addr | grep inet6 | grep "scope global" | awk '{$1=$1};1' | \
 
 # Return OS name
 get_os () {
-    un=$(uname | awk '{print tolower($0)}')
+    local un=$(uname | awk '{print tolower($0)}')
     [ "$un" = "darwin" ] && echo 'macos' || echo $un
 }
 
 # Return architecture name
 get_arch () {
-    arc=$(arch)
+    local arc=$(arch)
     [ "$arc" = "aarch64" ] && echo 'arm64' || \
     ([ "$arc" = "x86_64" ] && echo 'amd64' || echo $arc)
 }
 
 # Return joined OS and architecture names
 get_os_arch () {
-    un=$(get_os)
-    arc=$(get_arch)
+    local un=$(get_os)
+    local arc=$(get_arch)
     [[ $un == 'linux' && $arc == 'amd64' ]] && echo $un || echo $un'_'$arc
 }
 
@@ -112,7 +112,7 @@ get_ubuntu_ver () {
 
 # Add a text to bash profile file if it does not exist
 # Default text is $HOME/.local/bin
-add2profile () {
+a2p () {
     local exp=${1:-'export PATH="$PATH:$HOME/.local/bin"'}
     exist=$(grep "$exp" $PROFILE)
     if [ -z "$exist" ]; then
@@ -120,3 +120,87 @@ add2profile () {
     fi
     source $PROFILE
 }
+
+# Check a package is already installed or not
+# Args:
+#   $1: Name of package
+is_pkg_exist () {
+    local dist=$(get_linux_dist)
+    if [ $dist == "Ubuntu" ]; then
+      ! [ -z "$(dpkg -l | grep $1)" ]
+    elif [ $dist == "macos" ]; then
+        if [ -f "$(which port)" ]; then
+            ret=$(port installed $1)
+            ! [ "$ret" != "None of the specified ports are installed." ]
+        fi
+    fi
+}
+
+# Check package(s) need to install
+#   $1: Name of packages to install
+to_install () {
+    local to_install=
+    for p in $1
+    do
+        if is_pkg_exist $p; then
+            to_install+=" $p"
+        fi
+
+    done
+    echo $to_install
+}
+
+# Multiple Install function
+# Currently only supports Ubuntu/debian and Macports
+#
+# Args:
+#    $1: Name of packages to install
+install_pkg () {
+    local dist=$(get_linux_dist)
+    if [ $dist == "Ubuntu" ]; then
+        sudo apt update > /dev/null 2>&1
+        sudo apt install $1 -y > /dev/null 2>&1
+    elif [ $dist == "macos" ]; then
+        if [ -f "$(which port)" ]; then
+            sudo port install $1 > /dev/null 2>&1
+        fi
+    else
+        col $BGR "Installing dependencies on $dist is not supported."
+        col $BGR "You need to make sure install dependencies manually."
+    fi
+}
+
+# Install given packages if not installed
+# Currently only supports Ubuntu and Macports
+#
+# Args:
+#   $1: Name of packages to install
+#   $2: Installing Message Text
+#       Default: "Installing dependencies"
+#   $3: End of Installing Message Text
+#       Default: "Dependencies installed"
+install () {
+    local to_install=$(to_install "$1")
+    local header="${2:-"Installing dependencies"}"
+    local footer="${3:-"Dependencies installed"}"
+    local installed=false
+    if test -n "$to_install"; then
+        installed=true
+        ylw "$header"; echo -e ''
+        install_pkg $to_install
+    fi
+    [ "$installed" = true ] && ylw "$footer"
+}
+
+# Install given packages if not installed.
+# Currently only supports Ubuntu and Macports.
+# Created for pre-dependencies.
+#
+# Args:
+#   $1: Name of packages to install
+install_pre_deps () {
+    install "$1" \
+            "Installing pre-dependencies to run the script..." \
+            "Pre-dependencies installed"
+}
+
