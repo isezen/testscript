@@ -351,7 +351,6 @@ if [ -z "$(get_ip6)" ]; then
 fi
 
 opts=("Install")
-vr=$(version remote)
 if is_installed; then
     vc=$(version)
     opts+=("Uninstall")
@@ -359,6 +358,7 @@ if is_installed; then
     txt+='\n'"$(wallet_str)"
     txt+='\n'$(msg_warn "If you select [1], current Massa installation will be completely removed.")
     #
+    vr=$(version remote)
     if [ "$vc" != "$vr" ]; then
         opts+=("Update")
         txt+='\n'$(line2)
@@ -367,8 +367,8 @@ if is_installed; then
     fi
 fi
 echo -e "$txt"'\n'
-opts+=("Exit")
 
+opts+=("Exit")
 PS3=$'\n'$'\033[0;33m'"⬣ What would you like to do?: "
 select opt in "${opts[@]}";
 do
@@ -395,7 +395,7 @@ do
       break
       ;;
     "Exit")
-        red "-ByE\U1F60B\n"
+        red "-ByE\U02763\U1F60B\n"
       break
       ;;
     *)
