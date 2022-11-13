@@ -203,9 +203,10 @@ wallet_str () {
     public=$(get_wallet public)
     address=$(get_wallet address)
     line1
-    echo -e "Secret Key : ${RED}$secret${NC}"
-    echo -e "Public Key : ${GRN}$public${NC}"
-    echo -e "Address    : ${BLU}$address${NC}"
+    echo ""
+    echo -e "Secret Key : ${R}$secret${NONE}"
+    echo -e "Public Key : ${G}$public${NONE}"
+    echo -e "Address    : ${B}$address${NONE}"
     line1
 }
 
