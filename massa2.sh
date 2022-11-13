@@ -22,6 +22,7 @@ BOOTSTRAP_IP="0.0.0.0:31245"
 # -------------------------------------------------------------
 REMOTE=https://api.github.com/repos/massalabs/massa/releases/latest
 URL=https://raw.githubusercontent.com/isezen/testscript/main
+echo "Loading..."
 source <(curl -s $URL/common.sh)
 
 header=$(cat <<EOF
