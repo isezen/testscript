@@ -40,10 +40,10 @@ BGW="\033[47m"
 
 # UNICODE CODES
 # -------------------------------------------------------------
-CHECK='\U02714'; WARN='\U026A1'; CROSS='\U274c'
+CHECK='\U02714'; WARN='\U026A1'; CROSS='\U274c'; NOTE='\U1F4D3'
 # -------------------------------------------------------------
 # FUNCTIONS:
-col () { echo -ne $1; echo -e "$2"; echo -ne ${NONE}; }
+col () { echo -ne $1; echo -ne "$2"; echo -ne ${NONE}; }
 red () { col $R "$1"; }
 grn () { col $G "$1"; }
 ylw () { col $Y "$1"; }
@@ -55,6 +55,7 @@ wht () { col $W "$1"; }
 msg_info () { grn "$CHECK $1"; }
 msg_warn () { org "$WARN $1"; }
 msg_err  () { red "$CROSS $1"; }
+msg_note () { wht "$NOTE $1"; }
 
 rep ()   { eval "printf -- '${1:-'-'}%.0s' {1.."${2:-80}"}"; }
 line ()  { col ${2:-$M} $(rep ${1:-'-'}); }
@@ -141,7 +142,8 @@ get_pass () {
 #    $1: Question prompt
 is_yes () {
     prompt=${1:-"Do you want?"}
-    prompt+=" (y/[n]) "
+    default=${2:-"n"}
+    prompt+=$([ "$default" == "y" ] && echo " ([y]/n) " || echo " (y/[n]) ")
     while true; do
         read -p "$prompt" yn
         yn=${yn:-n}
