@@ -136,6 +136,24 @@ get_pass () {
     echo "$pass"
 }
 
+# Ask yes/no question.
+# Args:
+#    $1: Question prompt
+is_yes () {
+    prompt=${1:-"Do you want?"}
+    prompt+=" (y/[n]) "
+    while true; do
+        read -p "$prompt" yn
+        yn=${yn:-n}
+        case $yn in 
+            [yY] ) break;;
+            [nN] ) break;;
+            * ) echo [y]es or [n]o?;
+        esac
+    done
+    [ "$yn" = "y" ]
+}
+
 # Check a package is already installed or not
 # Args:
 #   $1: Name of package
@@ -219,3 +237,32 @@ install_pre_deps () {
             "Pre-dependencies installed"
 }
 
+# Save embedded content in script files
+# Args:
+#    $1: Starting pattern of variables
+save_embedded_content () {
+    pattern=${1:-script}
+    echo -e ${YLW}'Generating '$pattern's...'${NC}
+    vars="$(set | grep "^"$pattern"\_" | grep -v '_file' | 
+        awk -F= '{print $1}' | uniq)"
+    pat="^# Path:"
+    for v in $vars
+    do
+        content=$(eval echo \"\${$v}\")
+        file_path=$(echo "$content" | grep "$pat" | awk '{print $3}')
+        dir_path="$(dirname "${file_path}")"
+        mkdir -p "$dir_path"
+        content=$(echo "$content" | grep -v "$pat")
+        sd=
+        if [[ $file_path != $HOME* ]]; then
+            sd="sudo"
+        fi
+        if test -n "$file_path"; then
+            eval 'echo "$content" | '$sd' tee $file_path > /dev/null'
+            if [[ "$content" == "#!"* ]]; then
+                eval $sd' chmod +x "$file_path"'
+            fi
+            echo -e ${YLW}' '${CHK}' '$file_path${NC}
+        fi
+    done
+}
