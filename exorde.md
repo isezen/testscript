@@ -12,15 +12,14 @@ su - exorde
 ## Install required packages
 ```sh
 sudo apt update && sudo apt upgrade -y
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
-sudo apt install -y build-essential libssl-dev libffi-dev git curl screen
+sudo apt install -y git curl
 ```
 
 ## Install Docker
 ```sh
 curl -fsSL https://get.docker.com/ -o get-docker.sh
 chmod +x ./get-docker.sh
-sudo ./get-docker.sh # RInstall Docker
+sudo ./get-docker.sh # Install Docker
 sudo usermod -aG docker $USER
 ```
 
@@ -30,10 +29,11 @@ sudo usermod -aG docker $USER
 git clone https://github.com/exorde-labs/ExordeModuleCLI.git
 ```
 
-## Build Exorde (takes a while)
+## Build Exorde
+This will take a while...
 ```sh
 cd ExordeModuleCLI
-docker build -t exorde-cli .
+sudo docker build -t exorde-cli .
 ```
 
 Resulting lines should be as follows:
@@ -51,8 +51,8 @@ Successfully tagged exorde-cli:latest
 
 ## Enable Docker service
 ```sh
-sudo systemctl enable docker.service
-sudo systemctl enable containerd.service
+sudo systemctl enable --now docker.service
+sudo systemctl enable --now containerd.service
 ```
 
 ## Create and run Exorde container
@@ -83,7 +83,7 @@ cd ~/ExordeModuleCLI
 git pull # pull update from github
 docker build -t exorde-cli . # build
 # create and run new container
-docker run -d -e PYTHONUNBUFFERED=1 --restart always --name exorde-cli exorde-cli -m METAMASK_WALLET_ADDRESS -l LOGGING
+docker run -d -e PYTHONUNBUFFERED=1 --restart always --name exorde-cli exorde-cli -m METAMASK_WALLET_ADDRESS -l 2
 ```
 
 ## USEFUL COMMANDS:
