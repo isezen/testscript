@@ -1,6 +1,7 @@
 # INSTALL EXORDE
 
 * Exorde Installation for Ubuntu Server 22.04 LTS
+* [Exorde Leaderboard](https://explorer.exorde.network/leaderboard)
 
 ## Create User for Exorde
 ```sh
