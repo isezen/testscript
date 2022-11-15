@@ -24,13 +24,19 @@ sudo ./get-docker.sh # Install Docker
 sudo usermod -aG docker $USER
 ```
 
+## Easy Install
+```sh
+docker run -d --restart unless-stopped --pull always --name exorde-cli rg.fr-par.scw.cloud/exorde-labs/exorde-cli -m METAMASK_WALLET_ADDRESS -l 2
+```
 
-## Download remote repo
+## Install from github
+
+### Download remote repo
 ```sh
 git clone https://github.com/exorde-labs/ExordeModuleCLI.git
 ```
 
-## Build Exorde
+### Build Exorde
 This will take a while...
 ```sh
 cd ExordeModuleCLI
@@ -50,13 +56,13 @@ Successfully built 9af5ea26d586
 Successfully tagged exorde-cli:latest
 ```
 
-## Enable Docker service
+### Enable Docker service
 ```sh
 sudo systemctl enable --now docker.service
 sudo systemctl enable --now containerd.service
 ```
 
-## Create and run Exorde container
+### Create and run Exorde container
 
 Use a test Metamask wallet to run Exorde in Docker.
 Replace `METAMASK_WALLET_ADDRESS` with yours.
@@ -75,7 +81,7 @@ Please try restarting your application.
 ```
 
 
-# How to update?
+## How to update?
 
 ```sh
 docker stop exorde-cli # stop running container
