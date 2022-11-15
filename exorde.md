@@ -1,7 +1,6 @@
 # INSTALL EXORDE
 
-* Exorde Installation for Ubuntu Server 22.04 LTS
-* [Exorde Leaderboard](https://explorer.exorde.network/leaderboard)
+**NOTE:** Tested on Ubuntu Server 22.04 LTS
 
 ## Create User for Exorde
 ```sh
@@ -24,10 +23,14 @@ sudo ./get-docker.sh # Install Docker
 sudo usermod -aG docker $USER
 ```
 
+**NOTE:** At this point, you may need to log out & in your linux account.
+
 ## Easy Install
+
 ```sh
 docker run -d --restart unless-stopped --pull always --name exorde-cli rg.fr-par.scw.cloud/exorde-labs/exorde-cli -m METAMASK_WALLET_ADDRESS -l 2
 ```
+If you choose this method, no need to install from github.
 
 ## Install from github
 
@@ -102,3 +105,10 @@ docker run -d -e PYTHONUNBUFFERED=1 --restart always --name exorde-cli exorde-cl
 * Restart the Exorde container: `docker restart exorde-cli`
 * List all containers (Running and stopped): `docker ps -a`
 * List containers (Running only): `docker ps`
+
+## REFERENCES:
+* [Exorde Github](https://github.com/exorde-labs/ExordeModuleCLI)
+* [Exorde Leaderboard](https://explorer.exorde.network/leaderboard)
+* [Leaderboard](https://explorer.exorde.network/leaderboard)
+* [Skale Node list](https://light-vast-diphda.explorer.mainnet.skalenodes.com/)
+* [Exorde Bitcoin Price Prediction](https://exorde.io/bitcoin)
