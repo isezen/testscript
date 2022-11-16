@@ -23,6 +23,12 @@ sudo ./get-docker.sh # Install Docker
 sudo usermod -aG docker $USER
 ```
 
+**Enable Docker service**
+```sh
+sudo systemctl enable --now docker.service
+sudo systemctl enable --now containerd.service
+```
+
 **NOTE:** At this point, you may need to log out & in your linux account.
 
 ## Easy Install
@@ -30,7 +36,7 @@ sudo usermod -aG docker $USER
 ```sh
 docker run -d --restart unless-stopped --pull always --name exorde-cli rg.fr-par.scw.cloud/exorde-labs/exorde-cli -m METAMASK_WALLET_ADDRESS -l 2
 ```
-If you choose this method, no need to install from github.
+If you choose this method, no need to install from github. Ignore the rest of this tutorial.
 
 ## Install from github
 
@@ -57,12 +63,6 @@ Removing intermediate container cca98ea52856
  ---> 9af5ea26d586
 Successfully built 9af5ea26d586
 Successfully tagged exorde-cli:latest
-```
-
-### Enable Docker service
-```sh
-sudo systemctl enable --now docker.service
-sudo systemctl enable --now containerd.service
 ```
 
 ### Create and run Exorde container
