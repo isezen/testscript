@@ -617,7 +617,8 @@ do
       ;;
     "Update")
     echo -e '\e[1;35m\xF0\x9F\x9A\x80 Coming Soon...\e[0m'
-    done_process
+    download_bins
+    info
       break
       ;;
     "Exit")
