@@ -134,7 +134,6 @@ a2p () {
 # Remove variable from bash profile file
 rfp () {
     pat="^export $1*"
-    echo $pat
     [ -n "$(grep "$pat" $PROFILE)" ] && 
     grep -v "$pat" $PROFILE > $PROFILE.tmp && 
     mv $PROFILE.tmp $PROFILE
