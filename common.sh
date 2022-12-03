@@ -4,6 +4,9 @@
 #
 #
 
+# PATHS
+PROFILE=$HOME/.profile
+
 # COLOR CODES
 # -------------------------------------------------------------
 NONE="\033[0m"    # unsets color to term's fg color
@@ -126,6 +129,14 @@ a2p () {
         echo -e "$exp" >> $PROFILE
     fi
     source $PROFILE
+}
+
+# Remove variable from bash profile file
+rfp () {
+    pat="^export $1*"
+    [ -n "$(grep "$pat" $PROFILE)" ] && 
+    grep -v "$pat" $PROFILE > $PROFILE.tmp && 
+    mv $PROFILE.tmp $PROFILE
 }
 
 # Get a password from $USER
