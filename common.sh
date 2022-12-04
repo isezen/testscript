@@ -120,6 +120,9 @@ get_ubuntu_ver () {
 # String to lowercase
 tolower () { echo "$1" | awk '{print tolower($0)}'; }
 
+# String to uppercase
+tolower () { echo "$1" | awk '{print toupper($0)}'; }
+
 # Add a text to bash profile file if it does not exist
 # Default text is $HOME/.local/bin
 a2p () {
