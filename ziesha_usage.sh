@@ -49,6 +49,7 @@ function _usage_main () {
     -a | autoupdate : Set auto-update on/off
     -s | set        : Set a variable
     -g | get        : Get a variable
+       | download   : Download zoro dat files
        | init       : Initialize bazuka
        | run        : Run selected tool
        | reset      : Reset bazuka and wallet
