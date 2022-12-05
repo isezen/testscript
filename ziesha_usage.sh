@@ -229,7 +229,10 @@ function _usage_download () {
   cat<<EOF
 
   $DESCRIPTION
-    Download Zoro circuit-param files
+    Download Zoro circuit-param files.
+    Downloading process may take a long time.
+    Consider run the command in a screen session.
+
 
   $OPTIONS
     -h | --help : Shows this message
