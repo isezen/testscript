@@ -223,6 +223,25 @@ function _usage_init () {
 EOF
 }
 
+# Print usage for download command
+function _usage_download () {
+  _version
+  cat<<EOF
+
+  $DESCRIPTION
+    Download Zoro circuit-param files
+
+  $OPTIONS
+    -h | --help : Shows this message
+
+  $USAGE
+    [0;49;96m$ $EXE download update-dat
+    $ $EXE download deposit-dat
+    $ $EXE download withdraw-dat[0m
+
+EOF
+}
+
 function _usage_reset () {
   _version
   cat<<EOF
