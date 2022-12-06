@@ -143,16 +143,20 @@ function _usage_get () {
     -h | --help : Shows this message
 
   $COMMANDS
-    discord-handle : Your discord handle
-    network        : Network name
-    share-capacity : Share Capacity
-    share-easiness : Share Easiness
-    reward-ratio   : Reward Ratio
-    reward-delay   : Reward Delay
-    zoro-seed      : Zoro Seed
-    update-dat     : update.dat file path
-    deposit-dat    : deposit.dat file path
-    withdraw-dat   : withdraw.dat file path
+    GENERAL:
+     discord-handle  : Your discord handle
+     network         : Network name
+     update-interval : Auto-update interval
+    POOL:
+     share-capacity  : Share Capacity
+     share-easiness  : Share Easiness
+     reward-ratio   : Reward Ratio
+     reward-delay   : Reward Delay
+    ZORO:
+     zoro-seed      : Zoro Seed
+     update-dat     : update.dat file path
+     deposit-dat    : deposit.dat file path
+     withdraw-dat   : withdraw.dat file path
     
 
   $USAGE
