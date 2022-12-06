@@ -177,6 +177,7 @@ function _usage_set () {
     they will be set to default ones.
 
   $OPTIONS
+     -h | --help            : Shows this message
     GENERAL:
      -d | --discord-handle  : Your discord handle
      -n | --network         : Network name
@@ -194,7 +195,6 @@ function _usage_set () {
                               [0;33m(Default is $DEPOSIT_DAT)[0m
      -w | --withdraw-dat    : withdraw.dat file path
                               [0;33m(Default is $WITHDRAW_DAT)[0m
-     -h | --help            : Shows this message
 
   $USAGE
     [0;49;96m$ $EXE set --discord-handle MYHANDLE
