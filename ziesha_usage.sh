@@ -233,7 +233,6 @@ function _usage_download () {
     Downloading process may take a long time.
     Consider run the command in a screen session.
 
-
   $OPTIONS
     -h | --help : Shows this message
 
@@ -277,6 +276,7 @@ function _usage_service () {
 
   $USAGE
     [0;49;96m$ $EXE start bazuka # will start bazuka in background
+    $ $EXE start auto-update # will start auto-update
     $ $EXE stop zoro # will stop if it is running
     $ $EXE restart uzi-pool # will restart uzi-pool[0m
 
