@@ -180,7 +180,7 @@ function _usage_set () {
     GENERAL:
      -d | --discord-handle  : Your discord handle
      -n | --network         : Network name
-     -u | --update-interval : Auto-update interval (seconds)
+     -u | --update-interval : Auto-update interval [0;33m(Default is $UPDATE_INTERVAL seconds)[0m
     POOL:
      -c | --share-capacity  : Share Capacity [0;33m(Default is $SHARE_CAPACITY)[0m
      -e | --share-easiness  : Share Easiness [0;33m(Default is $SHARE_EASINESS)[0m
