@@ -177,20 +177,21 @@ function _usage_set () {
     they will be set to default ones.
 
   $OPTIONS
-    -d | --discord-handle : Your discord handle
-    -n | --network        : Network name
-    -c | --share-capacity : Share Capacity [0;33m(Default is $SHARE_CAPACITY)[0m
-    -e | --share-easiness : Share Easiness [0;33m(Default is $SHARE_EASINESS)[0m
-    -o | --reward-ratio   : Reward Ratio   [0;33m(Default is $REWARD_RATIO)[0m
-    -y | --reward-delay   : Reward Delay   [0;33m(Default is $REWARD_DELAY)[0m
-    -z | --zoro-seed      : Zoro Seed
-    -t | --update-dat     : update.dat file path
-                            [0;33m(Default is $UPDATE_DAT)[0m
-    -p | --deposit-dat    : deposit.dat file path
-                            [0;33m(Default is $DEPOSIT_DAT)[0m
-    -w | --withdraw-dat   : withdraw.dat file path
-                            [0;33m(Default is $WITHDRAW_DAT)[0m
-    -h | --help           : Shows this message
+    -d | --discord-handle  : Your discord handle
+    -n | --network         : Network name
+    -u | --update-interval : Auto-update interval (seconds)
+    -c | --share-capacity  : Share Capacity [0;33m(Default is $SHARE_CAPACITY)[0m
+    -e | --share-easiness  : Share Easiness [0;33m(Default is $SHARE_EASINESS)[0m
+    -o | --reward-ratio    : Reward Ratio   [0;33m(Default is $REWARD_RATIO)[0m
+    -y | --reward-delay    : Reward Delay   [0;33m(Default is $REWARD_DELAY)[0m
+    -z | --zoro-seed       : Zoro Seed
+    -t | --update-dat      : update.dat file path
+                             [0;33m(Default is $UPDATE_DAT)[0m
+    -p | --deposit-dat     : deposit.dat file path
+                             [0;33m(Default is $DEPOSIT_DAT)[0m
+    -w | --withdraw-dat    : withdraw.dat file path
+                             [0;33m(Default is $WITHDRAW_DAT)[0m
+    -h | --help            : Shows this message
 
   $USAGE
     [0;49;96m$ $EXE set --discord-handle MYHANDLE
