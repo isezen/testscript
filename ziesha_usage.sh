@@ -180,10 +180,12 @@ function _usage_set () {
     -d | --discord-handle  : Your discord handle
     -n | --network         : Network name
     -u | --update-interval : Auto-update interval (seconds)
+    POOL:
     -c | --share-capacity  : Share Capacity [0;33m(Default is $SHARE_CAPACITY)[0m
     -e | --share-easiness  : Share Easiness [0;33m(Default is $SHARE_EASINESS)[0m
     -o | --reward-ratio    : Reward Ratio   [0;33m(Default is $REWARD_RATIO)[0m
     -y | --reward-delay    : Reward Delay   [0;33m(Default is $REWARD_DELAY)[0m
+    ZORO:
     -z | --zoro-seed       : Zoro Seed
     -t | --update-dat      : update.dat file path
                              [0;33m(Default is $UPDATE_DAT)[0m
