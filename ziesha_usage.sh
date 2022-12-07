@@ -126,8 +126,8 @@ function _usage_log () {
 
   $USAGE
     [0;49;96m$ $EXE log bazuka
-    $ $EXE log zoro
-    $ $EXE log uzi-pool
+    $ $EXE log zoro -c
+    $ $EXE log uzi-pool -n 100
     $ $EXE log uzi-miner[0m
 
 EOF
