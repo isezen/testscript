@@ -120,7 +120,9 @@ function _usage_log () {
     Tools: ('$APPS')
 
   $OPTIONS
-    -h | --help : Shows this message
+    -n | --nlines   : Initial number of lines to output [0;33m(Default is 30)[0m
+    -c | --no-color : No colorized output
+    -h | --help     : Shows this message
 
   $USAGE
     [0;49;96m$ $EXE log bazuka
