@@ -1,6 +1,7 @@
 # INSTALL IRONFISH
 
 **NOTE:** Tested on Ubuntu Server 22.04 LTS
+
 **NOTE:** Minimum requirements are 4CPU+8GB RAM. However, it might run with 2CPU. Just try.
 
 ## Create User for Ironfish (OPTIONAL)
