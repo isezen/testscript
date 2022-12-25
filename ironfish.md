@@ -28,7 +28,8 @@ wget https://nodejs.org/download/release/v16.19.0/node-v16.19.0-linux-x64.tar.gz
 tar -xzvf node-v16.19.0-linux-x64.tar.gz
 ```
 
-Add NPM to the system PATH
+#### Add NPM to the system PATH
+
 Open `.profile` file by `nano .profile` command and add the following line.
 ```sh
 export PATH="$HOME/node-v16.19.0/bin:$PATH"
