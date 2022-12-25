@@ -62,9 +62,9 @@ To make it easier to catch up the current height, we can download the chain data
 ironfish chain:download
 ```
 
-
 ## Set Graffiti and Telemetry
-To be able to earn points, you have to set your graffiti and Telemetry. You have to register yourself to set a graffiti/username. Register here https://testnet.ironfish.network/signup
+You can simply run `ironfish testnet` command to set your graffiti and telemetry or run the commands below. You have to register yourself to set a graffiti/username. Register here https://testnet.ironfish.network/signup
+
 ```sh
 ironfish config:set blockGraffiti YOUR_GRAFFITI_NAME
 ironfish config:set enableTelemetry true
