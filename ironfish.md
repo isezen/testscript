@@ -81,14 +81,23 @@ Also you can set some other settings:
 ```sh
 ironfish config:set logPrefix "[%time%] [%level%] [%tag%]"
 ironfish config:set enableLogFile true
-ironfish config:set loglevel "*:debug"
+ironfish config:set logLevel "*:info"
 ```
 
-## How to start ironfish
+## How to Run ironfish
+
+### By nohup command:
 ```sh
-nohup ironfish start --workers=-1 </dev/null >/dev/null 2>&1 & && disown
+nohup ironfish start --workers=-1 </dev/null >/dev/null 2>&1 &
+disown
 ```
 
+### By screen command:
+If you prefer to use `screen`, create a screen session by `screen -S iron` and type
+```sh
+ironfish start
+```
+and exit from session by `CTRL+A+D` key combinations.
 
 ## USEFUL COMMANDS:
 
