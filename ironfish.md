@@ -33,7 +33,7 @@ tar -xzvf node-v18.13.0-linux-x64.tar.gz
 
 Open `.profile` file by `nano .profile` command and add the following line.
 ```sh
-export PATH="$HOME/node-v18.13.0/bin:$PATH"
+export PATH="$HOME/node-v18.13.0-linux-x64/bin:$PATH"
 ```
 and source the `.profile` by `source ~/.profile` command.
 
