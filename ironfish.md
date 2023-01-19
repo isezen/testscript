@@ -21,6 +21,11 @@ su - iron
 sudo apt update && sudo apt upgrade -y
 ```
 
+### Install required packages to compile ironfish
+```sh
+sudo apt install build-essential
+```
+
 ### Install NPM
 This is required to install ironfish easily.
 
