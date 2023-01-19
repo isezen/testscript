@@ -25,21 +25,21 @@ sudo apt update && sudo apt upgrade -y
 This is required to install ironfish easily.
 
 ```sh
-wget https://nodejs.org/download/release/v16.19.0/node-v16.19.0-linux-x64.tar.gz
-tar -xzvf node-v16.19.0-linux-x64.tar.gz
+wget wget https://nodejs.org/dist/v18.13.0/node-v18.13.0-linux-x64.tar.gz
+tar -xzvf node-v18.13.0-linux-x64.tar.gz
 ```
 
 #### Add NPM to the system PATH
 
 Open `.profile` file by `nano .profile` command and add the following line.
 ```sh
-export PATH="$HOME/node-v16.19.0/bin:$PATH"
+export PATH="$HOME/node-v18.13.0/bin:$PATH"
 ```
 and source the `.profile` by `source ~/.profile` command.
 
 After this step `which npm` command should show a similar result as follows:
 ```
-/home/iron2/node-v16.19.0-linux-x64/bin/npm
+/home/iron2/node-v18.13.0-linux-x64/bin/npm
 ```
 
 ### Install/update Ironfish
@@ -50,7 +50,7 @@ npm install -g ironfish
 ```
 If you installed ironfish succesfully, `which ironfish` command should give the following result:
 ```
-/home/iron2/node-v16.19.0-linux-x64/bin/ironfish
+/home/iron2/node-v18.13.0-linux-x64/bin/ironfish
 ```
 
 If you need to update ironfish in the future, use the command below:
