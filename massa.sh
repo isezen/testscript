@@ -65,6 +65,7 @@ script_node_status=$(cat <<EOF
 #!/bin/bash
 # Path: $HOME/.local/bin/node-status
 echo -e "\e[32m\u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
+echo -e "\$(massa-client wallet_info -p \$massa_password | grep Address)"
 echo -e "\$(massa-client wallet_info -p \$massa_password | grep Balance)"
 echo -e "\$(massa-client wallet_info -p \$massa_password | grep Rolls)"
 ns=\$(massa-client get_status -p \$massa_password)
@@ -73,8 +74,8 @@ if  [ -z "\$(echo "\$ns" | grep "os error 111")" ]; then
     echo -e "\033[1;33m\u2714 \$(echo "\$ns" | grep "Node's IP")\e[0m"
 
     echo -e "\nConfig:"
-    echo -e "\033[0;34m\$(echo "\$ns" | grep "Genesis timestamp")\e[0m"
-    echo -e "\033[0;34m\$(echo "\$ns" | grep "End timestamp")\e[0m\n"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep "Start stats timespan time")\e[0m"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep "End stats timespan time")\e[0m\n"
     echo -e "Episode ends in:\033[0;35m"
     massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
 
