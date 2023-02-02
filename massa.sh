@@ -73,9 +73,9 @@ if  [ -z "\$(echo "\$ns" | grep "os error 111")" ]; then
     echo -e "\033[0;31m\u2714 \$(echo "\$ns" | grep Version)\e[0m"
     echo -e "\033[1;33m\u2714 \$(echo "\$ns" | grep "Node's IP")\e[0m"
 
-    echo -e "\nConfig:"
-    echo -e "\033[0;34m\$(echo "\$ns" | grep "Start stats timespan time")\e[0m"
-    echo -e "\033[0;34m\$(echo "\$ns" | grep "End stats timespan time")\e[0m\n"
+    echo -e "\nConsensus stats:"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep -m1 "Start stats timespan time")\e[0m"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep -m1 "End stats timespan time")\e[0m\n"
     echo -e "Episode ends in:\033[0;35m"
     massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
 
