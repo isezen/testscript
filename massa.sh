@@ -55,6 +55,41 @@ cd $HOME/massa/massa-client
 ./massa-client \$@
 EOF
 )
+script_see_logs=$(cat <<EOF
+#!/bin/bash
+# Path: $HOME/.local/bin/see-logs
+journalctl -u massad.service -fo cat
+EOF
+)
+script_node_status=$(cat <<EOF
+#!/bin/bash
+# Path: $HOME/.local/bin/node-status
+echo -e "\e[32m\u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
+echo -e "\$(massa-client wallet_info -p \$massa_password | grep Address)"
+echo -e "\$(massa-client wallet_info -p \$massa_password | grep Balance)"
+echo -e "\$(massa-client wallet_info -p \$massa_password | grep Rolls)"
+ns=\$(massa-client get_status -p \$massa_password)
+if  [ -z "\$(echo "\$ns" | grep "os error 111")" ]; then
+    echo -e "\033[0;31m\u2714 \$(echo "\$ns" | grep Version)\e[0m"
+    echo -e "\033[0;36m\u2714 $(echo "$ns" | grep -m1 "Node's ID")\e[0m"
+    echo -e "\033[1;33m\u2714 \$(echo "\$ns" | grep "Node's IP")\e[0m"
+
+    echo -e "\nConsensus stats:"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep -m1 "Start stats timespan time")\e[0m"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep -m1 "End stats timespan time")\e[0m\n"
+    echo -e "Episode ends in:\033[0;35m"
+    massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
+
+    echo -e "\n\e[0mNetwork stats:"
+    echo -e "\033[0;33m\$(echo "\$ns" | grep "Active nodes")\e[0m"
+    echo -e "\033[0;31m\$(echo "\$ns" | grep "In connections")\e[0m"
+    echo -e "\e[32m\$(echo "\$ns" | grep "Out connections")\e[0m"
+else
+    echo -e "\033[0;31m\xE2\x8C\x9A Massa is currently bootstrapping\xE2\x80\xA6 \xE2\x98\x95\e[0m"
+fi
+echo -e ''
+EOF
+)
 script_node_status=$(cat <<EOF
 #!/bin/bash
 # Path: $HOME/.local/bin/node-status
@@ -83,15 +118,15 @@ if  [ -z "\$(echo "\$ns" | grep "os error 111")" ]; then
     echo -e "IP         : \033[1;33m\$ip\e[0m"
 
     echo -e "\nConsensus stats:"
-    echo -e "\033[0;34m$(echo "\$ns" | grep -m1 "Start stats timespan time")\e[0m"
-    echo -e "\033[0;34m$(echo "\$ns" | grep -m1 "End stats timespan time")\e[0m\n"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep -m1 "Start stats timespan time")\e[0m"
+    echo -e "\033[0;34m\$(echo "\$ns" | grep -m1 "End stats timespan time")\e[0m\n"
     echo -e "Episode ends in:\033[0;35m"
     massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
 
     echo -e "\n\e[0mNetwork stats:"
-    echo -e "\033[0;33m$(echo "\$ns" | grep "Active nodes")\e[0m"
-    echo -e "\033[0;31m$(echo "\$ns" | grep "In connections")\e[0m"
-    echo -e "\e[32m$(echo "\$ns" | grep "Out connections")\e[0m"
+    echo -e "\033[0;33m\$(echo "\$ns" | grep "Active nodes")\e[0m"
+    echo -e "\033[0;31m\$(echo "\$ns" | grep "In connections")\e[0m"
+    echo -e "\e[32m\$(echo "\$ns" | grep "Out connections")\e[0m"
 else
     echo -e "\033[0;31m\xE2\x8C\x9A Massa is currently bootstrapping\xE2\x80\xA6 \xE2\x98\x95\e[0m"
 fi
