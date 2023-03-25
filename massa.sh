@@ -55,48 +55,43 @@ cd $HOME/massa/massa-client
 ./massa-client \$@
 EOF
 )
-script_see_logs=$(cat <<EOF
-#!/bin/bash
-# Path: $HOME/.local/bin/see-logs
-journalctl -u massad.service -fo cat
-EOF
-)
 script_node_status=$(cat <<EOF
 #!/bin/bash
+# Path: $HOME/.local/bin/node-status
 file_node_privkey=~/massa/massa-node/config/node_privkey.key
-echo -e "\e[32m\u2714 Massa Service is "$(systemctl is-active massad)"\e[0m"
-if test -f "$file_node_privkey"; then
-  sk=$(jq -r .secret_key $file_node_privkey)
-  pk=$(jq -r .public_key $file_node_privkey)
-  echo -e "Secret Key : \033[0;31m$sk\e[0m"
-  echo -e "Public Key : \e[32m$pk\e[0m"
-  echo -e "Node's ID  : \033[0;34m${pk/P/N}\e[0m"
+echo -e "\e[32m\u2714 Massa Service is "\$(systemctl is-active massad)"\e[0m"
+if test -f "\$file_node_privkey"; then
+  sk=\$(jq -r .secret_key \$file_node_privkey)
+  pk=\$(jq -r .public_key \$file_node_privkey)
+  echo -e "Secret Key : \033[0;31m\$sk\e[0m"
+  echo -e "Public Key : \e[32m\$pk\e[0m"
+  echo -e "Node's ID  : \033[0;34m\${pk/P/N}\e[0m"
 fi
 
-wi="$(massa-client wallet_info -p $massa_password)"
-ad="$(echo $wi | grep Address | awk '{print $2}')"
-bal="$(echo "$wi" | grep Balance | awk '{$1=$1};1' | cut -f 2- -d ' ')"
-rolls="$(echo "$wi" | grep Rolls | awk '{$1=$1};1' | cut -f 2- -d ' ')"
-echo -e "Address    : \033[0;35m$ad\e[0m"
-echo -e "Balance    : $bal"
-echo -e "Rolls      : $rolls"
-ns=$(massa-client get_status -p $massa_password)
-if  [ -z "$(echo "$ns" | grep "os error 111")" ]; then
-    ip=$(echo "$ns" | grep "Node's IP")
-    ip=$(echo "$ip" | awk '{print $3}')
-    echo -e "Version    :\033[0;31m $(echo "$ns" | grep Version | awk '{print $2}')\e[0m"
-    echo -e "IP         : \033[1;33m$ip\e[0m"
+wi="\$(massa-client wallet_info -p \$massa_password)"
+ad="\$(echo \$wi | grep Address | awk '{print \$2}')"
+bal="\$(echo "\$wi" | grep Balance | awk '{\$1=\$1};1' | cut -f 2- -d ' ')"
+rolls="\$(echo "\$wi" | grep Rolls | awk '{\$1=\$1};1' | cut -f 2- -d ' ')"
+echo -e "Address    : \033[0;35m\$ad\e[0m"
+echo -e "Balance    : \$bal"
+echo -e "Rolls      : \$rolls"
+ns=\$(massa-client get_status -p \$massa_password)
+if  [ -z "\$(echo "\$ns" | grep "os error 111")" ]; then
+    ip=\$(echo "\$ns" | grep "Node's IP")
+    ip=\$(echo "\$ip" | awk '{print \$3}')
+    echo -e "Version    :\033[0;31m \$(echo "\$ns" | grep Version | awk '{print \$2}')\e[0m"
+    echo -e "IP         : \033[1;33m\$ip\e[0m"
 
     echo -e "\nConsensus stats:"
-    echo -e "\033[0;34m$(echo "$ns" | grep -m1 "Start stats timespan time")\e[0m"
-    echo -e "\033[0;34m$(echo "$ns" | grep -m1 "End stats timespan time")\e[0m\n"
+    echo -e "\033[0;34m$(echo "\$ns" | grep -m1 "Start stats timespan time")\e[0m"
+    echo -e "\033[0;34m$(echo "\$ns" | grep -m1 "End stats timespan time")\e[0m\n"
     echo -e "Episode ends in:\033[0;35m"
-    massa-client when_episode_ends -p $massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{$1=$1};1' | sed 's/^/    /'
+    massa-client when_episode_ends -p \$massa_password | sed 's/seconds.*/seconds/' | tr ',' '\n' | awk '{\$1=\$1};1' | sed 's/^/    /'
 
     echo -e "\n\e[0mNetwork stats:"
-    echo -e "\033[0;33m$(echo "$ns" | grep "Active nodes")\e[0m"
-    echo -e "\033[0;31m$(echo "$ns" | grep "In connections")\e[0m"
-    echo -e "\e[32m$(echo "$ns" | grep "Out connections")\e[0m"
+    echo -e "\033[0;33m$(echo "\$ns" | grep "Active nodes")\e[0m"
+    echo -e "\033[0;31m$(echo "\$ns" | grep "In connections")\e[0m"
+    echo -e "\e[32m$(echo "\$ns" | grep "Out connections")\e[0m"
 else
     echo -e "\033[0;31m\xE2\x8C\x9A Massa is currently bootstrapping\xE2\x80\xA6 \xE2\x98\x95\e[0m"
 fi
