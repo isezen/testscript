@@ -34,7 +34,7 @@ sudo systemctl enable --now containerd.service
 ## Easy Install
 
 ```sh
-docker run -d --restart unless-stopped --pull always --name exorde-cli rg.fr-par.scw.cloud/exorde-labs/exorde-cli -m METAMASK_WALLET_ADDRESS -l 2
+docker run -d --restart unless-stopped --pull always --name exorde-cli exordelabs/exorde-cli -m METAMASK_WALLET_ADDRESS -l 2
 ```
 If you choose this method, no need to install from github. Ignore the rest of this tutorial.
 
